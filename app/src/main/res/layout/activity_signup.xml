@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".signup"
+    android:background="#05AEA8">
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="إنشاء حساب "
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:fontFamily="@font/tajwal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="150dp"
+        />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="250dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <TextView
+                android:id="@+id/wellcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/black"
+                android:text="أهلاُ بك"
+                android:layout_marginEnd="23dp"
+                android:layout_marginTop="23dp"/>
+
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:textColor="@color/black"
+                android:background="@drawable/edit_border"
+                android:hint="اسم المستخدم"
+                app:layout_constraintTop_toBottomOf="@id/wellcome"
+                android:layout_margin="20dp"
+                android:inputType="textEmailAddress"/>
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:textColor="@color/black"
+                android:background="@drawable/edit_border"
+                android:hint="البريد الإلكتروني"
+                app:layout_constraintTop_toBottomOf="@id/username"
+                android:layout_margin="20dp"
+                android:inputType="textEmailAddress"/>
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:hint="كلمة المرور"
+                android:textColor="@color/black"
+                android:background="@drawable/edit_border"
+                app:layout_constraintTop_toBottomOf="@id/email"
+                android:layout_margin="20dp"
+                android:inputType="textVisiblePassword"
+                />
+
+
+            <Button
+                android:id="@+id/signup"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                app:layout_constraintTop_toBottomOf="@id/password"
+                android:layout_marginTop="30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@drawable/button_login"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:text="إنشاء حساب"
+                />
+
+
+
+
+            <TextView
+                android:id="@+id/hintlogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="هل تمتلك حساب ؟  "
+                app:layout_constraintTop_toBottomOf="@id/signup"
+                app:layout_constraintRight_toRightOf="@id/signup"
+                android:textColor="#949494"
+                android:textSize="15sp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="50dp"/>
+
+            <TextView
+                android:id="@+id/login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text= "تسجيل الدخول"
+                app:layout_constraintTop_toTopOf="@id/hintlogin"
+                app:layout_constraintRight_toLeftOf="@id/hintlogin"
+                android:textColor="#05AEA8"
+                android:textSize="15sp"
+                android:layout_marginRight="5dp"/>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

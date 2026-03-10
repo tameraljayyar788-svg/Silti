@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Admen"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/titleAdmen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="25dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="شاشة التحكم"
+        android:fontFamily="@font/tajwal"
+        android:gravity="center"
+        android:layout_marginTop="10dp"/>
+    <ImageButton
+        android:id="@+id/logout"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/logout"
+        app:layout_constraintTop_toTopOf="@id/titleAdmen"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="15dp"
+        app:layout_constraintBottom_toBottomOf="@id/titleAdmen"/>
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/titleAdmen"
+        android:layout_marginTop="55dp"
+        android:background="@color/white"
+        android:orientation="vertical">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="20sp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textSize="18sp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"
+                android:text="ضافة تصنيفات فرعية"
+                />
+            <ImageView
+                android:id="@+id/more1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/show_more"
+                android:background="@color/white"
+                android:padding="7dp"
+                app:layout_constraintTop_toTopOf="@id/text1"
+                app:layout_constraintBottom_toBottomOf="@id/text1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="20dp"
+                />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card1"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:cardCornerRadius="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="5dp"
+                android:visibility="visible"
+                android:backgroundTint="#F0F0F0"
+                app:layout_constraintTop_toBottomOf="@id/text1">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:background="#F0F0F0">
+                    <EditText
+                        android:id="@+id/nameCategorySecond"
+                        android:layout_width="310dp"
+                        android:layout_height="45dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="15dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:background="@color/white"
+                        android:textColorHint="@color/black"
+                        android:inputType="text"
+                        android:paddingRight="10dp"
+                        android:textColor="@color/black"
+                        android:hint="الاسم"/>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ChooseCategory"
+                        android:layout_width="310dp"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="5dp"
+                        app:layout_constraintStart_toStartOf="@id/nameCategorySecond"
+                        app:layout_constraintTop_toBottomOf="@id/nameCategorySecond"
+                        android:background="@color/white">
+                        <TextView
+                            android:id="@+id/CategoryTextChoose"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:text="التصنيف"
+                            android:textSize="18sp"
+                            app:layout_constraintRight_toRightOf="parent"
+                            android:layout_marginRight="10dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <Spinner
+                            android:id="@+id/spinerFirstCategory"
+                            android:layout_width="18dp"
+                            android:layout_height="15dp"
+                            android:background="@drawable/spiner"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginLeft="10dp"/>
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <Button
+                        android:id="@+id/addCategorySecond"
+                        android:layout_width="200dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/button_login"
+                        app:layout_constraintTop_toBottomOf="@id/ChooseCategory"
+                        android:layout_marginTop="10dp"
+                        android:layout_margin="20dp"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:text="إضافة"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="20sp"
+                app:layout_constraintTop_toBottomOf="@id/card1"
+                app:layout_constraintBottom_toTopOf="@id/card2"
+                android:textSize="18sp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"
+                android:text="إضافة تصنيفات داخل التصنيفات الفرعية"
+                />
+            <ImageView
+                android:id="@+id/more2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/show_more"
+                android:background="@color/white"
+                android:padding="7dp"
+                app:layout_constraintTop_toTopOf="@id/text2"
+                app:layout_constraintBottom_toBottomOf="@id/text2"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="20dp"
+                />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card2"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:cardCornerRadius="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="5dp"
+                android:visibility="gone"
+                android:backgroundTint="#F0F0F0"
+                app:layout_constraintTop_toBottomOf="@id/text2">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:background="#F0F0F0">
+                    <EditText
+                        android:id="@+id/nameCategoryIn"
+                        android:layout_width="310dp"
+                        android:layout_height="45dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/white"
+                        android:inputType="text"
+                        android:textColorHint="@color/black"
+                        android:paddingRight="10dp"
+                        android:textColor="@color/black"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:hint="الاسم"/>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/categoryIn"
+                        android:layout_width="310dp"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="5dp"
+                        app:layout_constraintStart_toStartOf="@id/nameCategoryIn"
+                        app:layout_constraintTop_toBottomOf="@id/nameCategoryIn"
+                        android:background="@color/white">
+                        <TextView
+                            android:id="@+id/CategoryTextChooseIn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:text="التصنيف"
+                            android:textSize="18sp"
+                            app:layout_constraintRight_toRightOf="parent"
+                            android:layout_marginRight="10dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <Spinner
+                            android:id="@+id/spinerCategorySecond"
+                            android:layout_width="18dp"
+                            android:layout_height="15dp"
+                            android:background="@drawable/spiner"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginLeft="10dp"/>
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <Button
+                        android:id="@+id/addCategoryIn"
+                        android:layout_width="200dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/button_login"
+                        app:layout_constraintTop_toBottomOf="@id/categoryIn"
+                        android:layout_marginTop="10dp"
+                        android:layout_margin="20dp"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:text="إضافة"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/text3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="20sp"
+                app:layout_constraintTop_toBottomOf="@id/card2"
+                app:layout_constraintBottom_toTopOf="@id/card3"
+                android:textSize="18sp"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/black"
+                android:text="إضافة منتجات"
+                />
+            <ImageView
+                android:id="@+id/more3"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/show_more"
+                android:background="@color/white"
+                android:padding="7dp"
+                app:layout_constraintTop_toTopOf="@id/text3"
+                app:layout_constraintBottom_toBottomOf="@id/text3"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="20dp"
+                />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card3"
+        android:layout_width="357dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="20sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="5dp"
+        android:backgroundTint="#F0F0F0"
+        app:layout_constraintTop_toBottomOf="@id/text3">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:background="#F0F0F0">
+
+
+            <ImageView
+                android:id="@+id/ImgProduct"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/add"
+                android:padding="40dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_margin="15dp"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/FirstForProduct"
+                android:layout_width="310dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ImgProduct"
+                android:background="@color/white">
+                <TextView
+                    android:id="@+id/TextChooseFirst"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="التصنيف الاساسي"
+                    android:textSize="18sp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginRight="10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <Spinner
+                    android:id="@+id/spinerFirstForProduct"
+                    android:layout_width="18dp"
+                    android:layout_height="15dp"
+                    android:background="@drawable/spiner"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginLeft="10dp"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/SecondForProduct"
+                android:layout_width="310dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/FirstForProduct"
+                android:background="@color/white">
+                <TextView
+                    android:id="@+id/TextForSecond"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="التصنيف الفرعي"
+                    android:textSize="18sp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginRight="10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <Spinner
+                    android:id="@+id/spinerSecondForCategory"
+                    android:layout_width="18dp"
+                    android:layout_height="15dp"
+                    android:background="@drawable/spiner"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginLeft="10dp"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/CategoryForProductIn"
+                android:layout_width="310dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/SecondForProduct"
+                android:background="@color/white">
+                <TextView
+                    android:id="@+id/CategoryTextIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="التصنيف الفرعي"
+                    android:textSize="18sp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginRight="10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <Spinner
+                    android:id="@+id/spinerCategoryIn"
+                    android:layout_width="18dp"
+                    android:layout_height="15dp"
+                    android:background="@drawable/spiner"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginLeft="10dp"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <EditText
+                android:id="@+id/nameProduct"
+                android:layout_width="310dp"
+                android:layout_height="45dp"
+                app:layout_constraintTop_toBottomOf="@id/CategoryForProductIn"
+                android:layout_marginTop="5dp"
+                android:background="@color/white"
+                android:textColor="@color/black"
+                android:paddingRight="10dp"
+                android:textColorHint="@color/black"
+                app:layout_constraintStart_toStartOf="@id/SecondForProduct"
+                android:hint="الاسم المنتج"/>
+
+            <EditText
+                android:id="@+id/PriceProduct"
+                android:layout_width="310dp"
+                android:layout_height="45dp"
+                app:layout_constraintTop_toBottomOf="@id/nameProduct"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/black"
+                android:background="@color/white"
+                android:paddingRight="10dp"
+                android:inputType="number"
+                android:textColorHint="@color/black"
+                app:layout_constraintStart_toStartOf="@id/nameProduct"
+                android:hint="السعر"/>
+
+
+            <EditText
+                android:id="@+id/rateProduct"
+                android:layout_width="310dp"
+                android:layout_height="45dp"
+                app:layout_constraintTop_toBottomOf="@id/PriceProduct"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/black"
+                android:background="@color/white"
+                android:paddingRight="10dp"
+                android:layout_margin="2dp"
+                android:inputType="number"
+                android:textColorHint="@color/black"
+                app:layout_constraintStart_toStartOf="@id/nameProduct"
+                android:hint="تقييم المنتج"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/size"
+                android:layout_width="310dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@color/white"
+                android:padding="10dp"
+                app:layout_constraintTop_toBottomOf="@id/rateProduct"
+                app:layout_constraintStart_toStartOf="@id/rateProduct">
+
+                <TextView
+                    android:id="@+id/textsize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="المقاسات"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <CheckBox
+                    android:id="@+id/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="#505050"
+                    android:text="S"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginLeft="15dp"
+                    app:layout_constraintTop_toBottomOf="@id/textsize"
+                    android:layout_marginTop="10dp"/>
+                <CheckBox
+                    android:id="@+id/Larg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="#505050"
+                    android:text="L"
+                    app:layout_constraintLeft_toLeftOf="@id/small"
+                    app:layout_constraintTop_toBottomOf="@id/small"
+                    android:layout_marginTop="5dp"/>
+                <CheckBox
+                    android:id="@+id/XLarg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="#505050"
+                    android:text="XL"
+                    app:layout_constraintLeft_toLeftOf="@id/small"
+                    app:layout_constraintTop_toBottomOf="@id/Larg"
+                    android:layout_marginTop="5dp"/>
+                <CheckBox
+                    android:id="@+id/XXLarg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="#505050"
+                    android:text="XXL"
+                    app:layout_constraintLeft_toRightOf="@id/small"
+                    android:layout_marginLeft="70dp"
+                    app:layout_constraintTop_toTopOf="@id/small" />
+                <CheckBox
+                    android:id="@+id/XXXLarg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="#505050"
+                    android:text="XXXL"
+                    app:layout_constraintLeft_toRightOf="@id/small"
+                    android:layout_marginLeft="70dp"
+                    app:layout_constraintTop_toBottomOf="@id/small" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <EditText
+                android:id="@+id/discribtion"
+                android:layout_width="310dp"
+                android:layout_height="100dp"
+                app:layout_constraintTop_toBottomOf="@id/size"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/black"
+                android:background="@color/white"
+                android:paddingRight="10dp"
+                android:inputType="text"
+                android:textColorHint="@color/black"
+                app:layout_constraintStart_toStartOf="@id/nameProduct"
+                android:hint="الوصف"/>
+
+            <Button
+                android:id="@+id/addProduct"
+                android:layout_width="200dp"
+                android:layout_height="45dp"
+                android:background="@drawable/button_login"
+                app:layout_constraintTop_toBottomOf="@id/discribtion"
+                android:layout_marginTop="10dp"
+                android:layout_margin="20dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="إضافة"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/text4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="20sp"
+                app:layout_constraintTop_toBottomOf="@id/card3"
+                app:layout_constraintBottom_toTopOf="@id/card4"
+                android:textSize="18sp"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/black"
+                android:text=" إضافة منتجات عليها خصم"
+                />
+            <ImageView
+                android:id="@+id/more4"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/show_more"
+                android:background="@color/white"
+                android:padding="7dp"
+                app:layout_constraintTop_toTopOf="@id/text4"
+                app:layout_constraintBottom_toBottomOf="@id/text4"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="20dp"
+                />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card4"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:cardCornerRadius="20sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="5dp"
+                android:backgroundTint="#F0F0F0"
+                app:layout_constraintTop_toBottomOf="@id/text4">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:background="#F0F0F0">
+
+
+                    <EditText
+                        android:id="@+id/nameproductForDis"
+                        android:layout_width="310dp"
+                        android:layout_height="45dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/white"
+                        android:textColor="@color/black"
+                        android:inputType="text"
+                        android:textColorHint="@color/black"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:hint="اسم المنتج"/>
+                    <EditText
+                        android:id="@+id/oldPrice"
+                        android:layout_width="310dp"
+                        android:layout_height="45dp"
+                        app:layout_constraintTop_toBottomOf="@id/nameproductForDis"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/white"
+                        android:paddingRight="10dp"
+                        android:layout_margin="2dp"
+                        android:textColor="@color/black"
+                        android:inputType="number"
+                        app:layout_constraintRight_toRightOf="@id/nameproductForDis"
+                        android:hint="السعر القديم"/>
+                    <EditText
+                        android:id="@+id/newPrice"
+                        android:layout_width="310dp"
+                        android:layout_height="45dp"
+                        app:layout_constraintTop_toBottomOf="@id/oldPrice"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/white"
+                        android:paddingRight="10dp"
+                        android:layout_margin="2dp"
+                        android:textColor="@color/black"
+                        android:inputType="number"
+                        app:layout_constraintRight_toRightOf="@id/nameproductForDis"
+                        android:hint="السعر الجديد"/>
+
+
+
+
+                    <Button
+                        android:id="@+id/addCategory"
+                        android:layout_width="200dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/button_login"
+                        app:layout_constraintTop_toBottomOf="@id/newPrice"
+                        android:layout_marginTop="10dp"
+                        android:layout_margin="20dp"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:text="إضافة"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

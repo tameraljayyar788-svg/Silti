@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/profile"
+        android:title="الصفحة الشخصي"
+        android:icon="@drawable/profile"/>
+
+    <item
+        android:id="@+id/offers"
+        android:title="الخصومات"
+        android:icon="@drawable/offers"/>
+    <item
+        android:id="@+id/ai"
+        android:title="المساعد الذكي"
+        android:icon="@drawable/ai"/>
+
+
+    <item
+        android:id="@+id/cart"
+        android:title="السلة"
+        android:icon="@drawable/cart"/>
+
+    <item
+        android:id="@+id/Home"
+        android:title="الصفحة الرئيسية"
+        android:icon="@drawable/home"/>
+
+
+
+
+
+
+</menu>

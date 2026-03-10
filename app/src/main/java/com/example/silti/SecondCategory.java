@@ -1,0 +1,45 @@
+package com.example.silti;
+
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+@Entity(
+        tableName = "second_categories",
+        foreignKeys = @ForeignKey(
+                entity = table_firstCategory.class,  // ✅ تم التصحيح
+                parentColumns = "id",
+                childColumns = "firstCategoryId",
+                onDelete = ForeignKey.CASCADE
+        ),
+        indices = @Index("firstCategoryId")
+)
+public class SecondCategory {
+    @PrimaryKey(autoGenerate = true)
+    public int id;
+
+    @ColumnInfo(name = "name")
+    public String name;
+
+    @ColumnInfo(name = "firstCategoryId")
+    public int firstCategoryId;
+
+    @ColumnInfo(name = "icon")
+    public String icon;
+
+    @ColumnInfo(name = "isActive")
+    public boolean isActive = true;
+
+    @ColumnInfo(name = "createdAt")
+    public long createdAt = System.currentTimeMillis();
+
+    // Constructors
+    public SecondCategory() {}
+
+    public SecondCategory(String name, int firstCategoryId, String icon) {
+        this.name = name;
+        this.firstCategoryId = firstCategoryId;
+        this.icon = icon;
+    }
+}
