@@ -70,6 +70,11 @@ public class SecondCategoryViewModel extends AndroidViewModel {
         secondCategoryRepository.deleteByFirstCategory(firstCategoryId);
     }
 
+    public void insert(String name, int firstCategoryId, String icon) {
+        table_secondCategory category = new table_secondCategory(name, firstCategoryId, icon);
+        secondCategoryRepository.insert(category);
+    }
+
     // Active count
     public void getActiveCountByFirstCategory(int firstCategoryId, SecondCategoryRepository.CountCallback callback) {
         secondCategoryRepository.getActiveCountByFirstCategory(firstCategoryId, callback);

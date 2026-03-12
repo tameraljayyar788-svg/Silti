@@ -56,6 +56,10 @@ public class ProductViewModel extends AndroidViewModel {
         currentInsideCategoryId.setValue(categoryId);
     }
 
+    public LiveData<List<table_product>> searchProducts(String query) {
+        return productRepository.searchProducts(query);
+    }
+
     public LiveData<List<table_product>> getProductsByInsideCategory() {
         return Transformations.switchMap(currentInsideCategoryId,
                 id -> productRepository.getProductsByInsideCategory(id));
