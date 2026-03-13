@@ -11,7 +11,6 @@ import java.util.List;
 public class SecondCategoryViewModel extends AndroidViewModel {
     private SecondCategoryRepository secondCategoryRepository;
     private MutableLiveData<Integer> currentFirstCategoryId = new MutableLiveData<>();
-    private LiveData<List<table_secondCategory>> categoriesByFirstCategory;
 
     public SecondCategoryViewModel(Application application) {
         super(application);
@@ -19,13 +18,16 @@ public class SecondCategoryViewModel extends AndroidViewModel {
     }
 
     public void setCurrentFirstCategoryId(int firstCategoryId) {
-        currentFirstCategoryId.setValue(firstCategoryId);
-        categoriesByFirstCategory = secondCategoryRepository.getCategoriesByFirstCategory(firstCategoryId);
+        // ✅ استخدام postValue بدلاً من setValue
+        currentFirstCategoryId.postValue(firstCategoryId);
     }
 
-    // Read
     public LiveData<List<table_secondCategory>> getCategoriesByFirstCategory() {
-        return categoriesByFirstCategory;
+        Integer id = currentFirstCategoryId.getValue();
+        if (id != null) {
+            return secondCategoryRepository.getCategoriesByFirstCategory(id);
+        }
+        return new MutableLiveData<>(null);
     }
 
     public LiveData<List<table_secondCategory>> getAllCategoriesByFirstCategory(int firstCategoryId) {
@@ -36,7 +38,6 @@ public class SecondCategoryViewModel extends AndroidViewModel {
         return secondCategoryRepository.getCategoryById(categoryId);
     }
 
-    // Insert
     public void insert(String name, String icon) {
         Integer firstCategoryId = currentFirstCategoryId.getValue();
         if (firstCategoryId != null) {
@@ -48,7 +49,6 @@ public class SecondCategoryViewModel extends AndroidViewModel {
         secondCategoryRepository.insert(category);
     }
 
-    // Update
     public void update(table_secondCategory category) {
         secondCategoryRepository.update(category);
     }
@@ -57,7 +57,6 @@ public class SecondCategoryViewModel extends AndroidViewModel {
         secondCategoryRepository.updateCategoryStatus(categoryId, isActive);
     }
 
-    // Delete
     public void delete(table_secondCategory category) {
         secondCategoryRepository.delete(category);
     }
@@ -70,12 +69,6 @@ public class SecondCategoryViewModel extends AndroidViewModel {
         secondCategoryRepository.deleteByFirstCategory(firstCategoryId);
     }
 
-    public void insert(String name, int firstCategoryId, String icon) {
-        table_secondCategory category = new table_secondCategory(name, firstCategoryId, icon);
-        secondCategoryRepository.insert(category);
-    }
-
-    // Active count
     public void getActiveCountByFirstCategory(int firstCategoryId, SecondCategoryRepository.CountCallback callback) {
         secondCategoryRepository.getActiveCountByFirstCategory(firstCategoryId, callback);
     }

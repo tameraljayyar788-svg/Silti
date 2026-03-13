@@ -59,6 +59,8 @@ public interface ProductDao {
     @Query("UPDATE products SET soldCount = soldCount + 1 WHERE id = :productId")
     void incrementSoldCount(long productId);
 
+
+
     @Query("UPDATE products SET quantity = quantity - :quantity WHERE id = :productId")
     void decreaseQuantity(long productId, int quantity);
 }

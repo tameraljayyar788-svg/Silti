@@ -6,11 +6,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomeFragment">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white">
+
+        <!-- ========== Header ========== -->
         <TextView
             android:id="@+id/nameApp"
             android:layout_width="wrap_content"
@@ -23,6 +24,7 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginRight="15sp"
             android:layout_marginTop="15sp"/>
+
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -31,7 +33,9 @@
             app:layout_constraintRight_toLeftOf="@id/nameApp"
             app:layout_constraintTop_toTopOf="@id/nameApp"
             app:layout_constraintBottom_toBottomOf="@id/nameApp"/>
+
         <ImageView
+            android:id="@+id/notification"
             android:layout_width="23dp"
             android:layout_height="23dp"
             android:src="@drawable/notification"
@@ -40,6 +44,7 @@
             app:layout_constraintTop_toTopOf="@id/nameApp"
             app:layout_constraintBottom_toBottomOf="@id/nameApp"/>
 
+        <!-- ========== NestedScrollView للمحتوى ========== -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -51,6 +56,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+                <!-- ========== شريط البحث ========== -->
                 <EditText
                     android:id="@+id/search"
                     android:layout_width="0dp"
@@ -65,6 +72,8 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
+
+                <!-- ==========المنتجات التي عليها خصومات ========== -->
                 <ImageButton
                     android:id="@+id/offersMain"
                     android:layout_width="340dp"
@@ -78,6 +87,9 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"/>
 
+                <!-- ========== التصنيفات الرئيسية ========== -->
+
+                <!-- تصنيف: بيت -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/home"
                     android:layout_width="105dp"
@@ -85,9 +97,7 @@
                     android:background="@drawable/category3"
                     app:layout_constraintTop_toBottomOf="@id/offersMain"
                     app:layout_constraintRight_toRightOf="@id/offersMain"
-
-                    android:layout_marginTop="10dp"
-                    >
+                    android:layout_marginTop="10dp">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/icon3"
@@ -116,17 +126,17 @@
                         android:text="بيت"
                         android:textSize="18sp"
                         app:layout_constraintTop_toBottomOf="@id/icon3"
-                        android:layout_marginTop="5dp"
-                        />
+                        android:layout_marginTop="5dp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- تصنيف: الجمال -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/prety"
                     android:layout_width="105dp"
                     android:layout_height="90dp"
                     android:background="@drawable/category1"
                     app:layout_constraintTop_toTopOf="@id/home"
-                    app:layout_constraintLeft_toLeftOf="@id/offersMain"
-                    >
+                    app:layout_constraintLeft_toLeftOf="@id/offersMain">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/icon1"
@@ -155,9 +165,10 @@
                         app:layout_constraintStart_toStartOf="parent"
                         android:textColor="@color/white"
                         android:text="الجمال"
-                        android:textSize="18sp"
-                        />
+                        android:textSize="18sp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- تصنيف: موضة -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/fation"
                     android:layout_width="105dp"
@@ -165,8 +176,7 @@
                     app:layout_constraintRight_toRightOf="@id/home"
                     app:layout_constraintLeft_toLeftOf="@id/prety"
                     android:layout_height="90dp"
-                    android:background="@drawable/category2"
-                    >
+                    android:background="@drawable/category2">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/icon2"
@@ -195,9 +205,10 @@
                         app:layout_constraintStart_toStartOf="parent"
                         android:textColor="@color/white"
                         android:text="موضة"
-                        android:textSize="18sp"
-                        />
+                        android:textSize="18sp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- تصنيف: إلكترونيات -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="105dp"
                     android:id="@+id/elictronic"
@@ -205,8 +216,7 @@
                     app:layout_constraintRight_toRightOf="@id/home"
                     android:layout_height="90dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/category4"
-                    >
+                    android:background="@drawable/category4">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/icon4"
@@ -235,9 +245,10 @@
                         app:layout_constraintStart_toStartOf="parent"
                         android:textColor="@color/white"
                         android:text="إلكترونيات"
-                        android:textSize="18sp"
-                        />
+                        android:textSize="18sp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- تصنيف: كُتب -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/books"
                     android:layout_width="105dp"
@@ -245,8 +256,7 @@
                     app:layout_constraintRight_toRightOf="@id/fation"
                     app:layout_constraintLeft_toLeftOf="@id/fation"
                     android:layout_height="90dp"
-                    android:background="@drawable/category5"
-                    >
+                    android:background="@drawable/category5">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/icon5"
@@ -275,17 +285,17 @@
                         android:layout_marginTop="5dp"
                         android:textColor="@color/white"
                         android:text="كُتب"
-                        android:textSize="18sp"
-                        />
+                        android:textSize="18sp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- تصنيف: رياضة -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/sport"
                     android:layout_width="105dp"
                     android:layout_height="90dp"
                     app:layout_constraintTop_toTopOf="@id/books"
                     app:layout_constraintLeft_toLeftOf="@id/prety"
-                    android:background="@drawable/category6"
-                    >
+                    android:background="@drawable/category6">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/icon6"
@@ -314,581 +324,58 @@
                         android:textColor="@color/white"
                         android:layout_marginTop="5dp"
                         android:text="رياضة"
-                        android:textSize="18sp"
-                        />
+                        android:textSize="18sp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- ========== عنوان الأكثر مبيعاً ========== -->
+
+
+                <!-- ========== قسم عروض اليوم ========== -->
+
+
+                <!-- ========== قسم قد يعجبك أيضاً ========== -->
                 <TextView
-                    android:id="@+id/moreSell"
+                    android:id="@+id/recommendedTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/books"
+                    app:layout_constraintTop_toBottomOf="@id/sport"
                     app:layout_constraintRight_toRightOf="@id/offersMain"
                     android:textSize="19sp"
                     android:textColor="@color/black"
-                    android:layout_marginTop="7dp"
-                    android:text="الأكثر مبيعاً"/>
+                    android:layout_marginTop="25dp"
+                    android:text="قد يعجبك أيضاً"/>
 
                 <HorizontalScrollView
+                    android:id="@+id/recommendedScroll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:background="@color/white"
-                    app:layout_constraintTop_toBottomOf="@id/moreSell"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/recommendedTitle"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp">
+
                     <LinearLayout
+                        android:id="@+id/recommendedContainer"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:padding="5dp"
                         android:layout_marginRight="10dp"
-                        android:background="@color/white"
-                        >
+                        android:background="@color/white">
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/product1"
-                            android:layout_width="150dp"
-                            android:layout_height="200dp"
-                            android:backgroundTint="@color/white"
-                            >
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="150dp"
-                                android:layout_height="200dp"
-                                android:background="@drawable/more_sell1">
-                                <ImageButton
-                                    android:id="@+id/like_product"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_black"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:padding="5dp"
-                                    android:visibility="visible"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-                                <ImageButton
-                                    android:id="@+id/like_red"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_red"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:visibility="gone"
-                                    android:padding="5dp"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-
-                                <ImageView
-                                    android:id="@+id/ImgProduct"
-                                    android:layout_width="80dp"
-                                    android:layout_height="100dp"
-                                    android:src="@drawable/logo"
-                                    app:layout_constraintTop_toBottomOf="@id/like_product"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    android:layout_marginTop="5dp"/>
-
-                                <TextView
-                                    android:id="@+id/price"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintTop_toTopOf="@id/like_product"
-                                    app:layout_constraintBottom_toBottomOf="@id/like_product"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    android:layout_marginRight="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="15sp"
-                                    android:text="100"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="10dp"
-                                    android:textColor="@color/white"
-                                    android:text="$"
-                                    app:layout_constraintTop_toTopOf="@id/price"
-                                    app:layout_constraintBottom_toTopOf="@id/price"
-                                    app:layout_constraintLeft_toLeftOf="@id/price"
-                                    app:layout_constraintRight_toLeftOf="@id/price"
-                                    android:layout_marginRight="10dp"
-                                    android:textStyle="italic|bold"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/ImgProduct"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_margin="10dp"
-                                    android:padding="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="18sp"
-                                    android:text="جاكيت جينز ممزق"/>
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        </androidx.cardview.widget.CardView>
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/product2"
-                            android:layout_width="150dp"
-                            android:backgroundTint="@color/white"
-                            android:layout_height="200dp"
-                            android:layout_marginStart="5dp">
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="150dp"
-                                android:layout_height="200dp"
-                                android:background="@drawable/more_sell2">
-                                <ImageButton
-                                    android:id="@+id/like_product2"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_black"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:padding="5dp"
-                                    android:visibility="visible"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-                                <ImageButton
-                                    android:id="@+id/like_red2"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_red"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:visibility="gone"
-                                    android:padding="5dp"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-
-                                <ImageView
-                                    android:id="@+id/ImgProduct2"
-                                    android:layout_width="80dp"
-                                    android:layout_height="100dp"
-                                    android:src="@drawable/logo"
-                                    app:layout_constraintTop_toBottomOf="@id/like_product2"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    android:layout_marginTop="5dp"/>
-
-                                <TextView
-                                    android:id="@+id/price2"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintTop_toTopOf="@id/like_product2"
-                                    app:layout_constraintBottom_toBottomOf="@id/like_product2"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    android:layout_marginRight="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="15sp"
-                                    android:text="100"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="10dp"
-                                    android:textColor="@color/white"
-                                    android:text="$"
-                                    app:layout_constraintTop_toTopOf="@id/price2"
-                                    app:layout_constraintBottom_toTopOf="@id/price2"
-                                    app:layout_constraintLeft_toLeftOf="@id/price2"
-                                    app:layout_constraintRight_toLeftOf="@id/price2"
-                                    android:layout_marginRight="10dp"
-                                    android:textStyle="italic|bold"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/ImgProduct2"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_margin="10dp"
-                                    android:padding="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="18sp"
-                                    android:text="جاكيت جينز ممزق"/>
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        </androidx.cardview.widget.CardView>
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/product3"
-                            android:layout_width="150dp"
-                            android:layout_height="200dp"
-                            android:backgroundTint="@color/white"
-                            android:layout_marginStart="5dp">
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="150dp"
-                                android:layout_height="200dp"
-                                android:background="@drawable/more_sell3">
-                                <ImageButton
-                                    android:id="@+id/like_product3"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_black"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:padding="5dp"
-                                    android:visibility="visible"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-                                <ImageButton
-                                    android:id="@+id/like_red3"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_red"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:visibility="gone"
-                                    android:padding="5dp"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-
-                                <ImageView
-                                    android:id="@+id/ImgProduct3"
-                                    android:layout_width="80dp"
-                                    android:layout_height="100dp"
-                                    android:src="@drawable/logo"
-                                    app:layout_constraintTop_toBottomOf="@id/like_product3"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    android:layout_marginTop="5dp"/>
-
-                                <TextView
-                                    android:id="@+id/price3"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintTop_toTopOf="@id/like_product3"
-                                    app:layout_constraintBottom_toBottomOf="@id/like_product3"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    android:layout_marginRight="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="15sp"
-                                    android:text="100"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="10dp"
-                                    android:textColor="@color/white"
-                                    android:text="$"
-                                    app:layout_constraintTop_toTopOf="@id/price3"
-                                    app:layout_constraintBottom_toTopOf="@id/price3"
-                                    app:layout_constraintLeft_toLeftOf="@id/price3"
-                                    app:layout_constraintRight_toLeftOf="@id/price3"
-                                    android:layout_marginRight="10dp"
-                                    android:textStyle="italic|bold"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/ImgProduct3"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_margin="10dp"
-                                    android:padding="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="18sp"
-                                    android:text="جاكيت جينز ممزق"/>
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        </androidx.cardview.widget.CardView>
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/produc4"
-                            android:layout_width="150dp"
-                            android:layout_height="200dp"
-                            android:backgroundTint="@color/white"
-                            android:layout_marginStart="5dp">
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="150dp"
-                                android:layout_height="200dp"
-                                android:background="@drawable/more_sell4">
-                                <ImageButton
-                                    android:id="@+id/like_product4"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_black"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:padding="5dp"
-                                    android:visibility="visible"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-                                <ImageButton
-                                    android:id="@+id/like_red4"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_red"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:visibility="gone"
-                                    android:padding="5dp"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-
-                                <ImageView
-                                    android:id="@+id/ImgProduct4"
-                                    android:layout_width="80dp"
-                                    android:layout_height="100dp"
-                                    android:src="@drawable/logo"
-                                    app:layout_constraintTop_toBottomOf="@id/like_product4"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    android:layout_marginTop="5dp"/>
-
-                                <TextView
-                                    android:id="@+id/price4"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintTop_toTopOf="@id/like_product4"
-                                    app:layout_constraintBottom_toBottomOf="@id/like_product4"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    android:layout_marginRight="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="15sp"
-                                    android:text="100"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="10dp"
-                                    android:textColor="@color/white"
-                                    android:text="$"
-                                    app:layout_constraintTop_toTopOf="@id/price4"
-                                    app:layout_constraintBottom_toTopOf="@id/price4"
-                                    app:layout_constraintLeft_toLeftOf="@id/price4"
-                                    app:layout_constraintRight_toLeftOf="@id/price4"
-                                    android:layout_marginRight="10dp"
-                                    android:textStyle="italic|bold"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/ImgProduct4"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_margin="10dp"
-                                    android:padding="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="18sp"
-                                    android:text="جاكيت جينز ممزق"/>
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        </androidx.cardview.widget.CardView>
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/produc5"
-                            android:layout_width="150dp"
-                            android:layout_height="200dp"
-                            android:backgroundTint="@color/white"
-                            android:layout_marginStart="5dp">
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="150dp"
-                                android:layout_height="200dp"
-                                android:background="@drawable/more_sell5">
-                                <ImageButton
-                                    android:id="@+id/like_product5"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_black"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:padding="5dp"
-                                    android:visibility="visible"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-                                <ImageButton
-                                    android:id="@+id/like_red5"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_red"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:visibility="gone"
-                                    android:padding="5dp"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-
-                                <ImageView
-                                    android:id="@+id/ImgProduct5"
-                                    android:layout_width="80dp"
-                                    android:layout_height="100dp"
-                                    android:src="@drawable/logo"
-                                    app:layout_constraintTop_toBottomOf="@id/like_product5"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    android:layout_marginTop="5dp"/>
-
-                                <TextView
-                                    android:id="@+id/price5"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintTop_toTopOf="@id/like_product5"
-                                    app:layout_constraintBottom_toBottomOf="@id/like_product5"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    android:layout_marginRight="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="15sp"
-                                    android:text="100"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="10dp"
-                                    android:textColor="@color/white"
-                                    android:text="$"
-                                    app:layout_constraintTop_toTopOf="@id/price5"
-                                    app:layout_constraintBottom_toTopOf="@id/price5"
-                                    app:layout_constraintLeft_toLeftOf="@id/price5"
-                                    app:layout_constraintRight_toLeftOf="@id/price5"
-                                    android:layout_marginRight="10dp"
-                                    android:textStyle="italic|bold"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/ImgProduct5"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_margin="10dp"
-                                    android:padding="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="18sp"
-                                    android:text="جاكيت جينز ممزق"/>
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        </androidx.cardview.widget.CardView>
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/produc6"
-                            android:layout_width="150dp"
-                            android:layout_height="200dp"
-                            android:backgroundTint="@color/white"
-                            android:layout_marginStart="5dp">
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="150dp"
-                                android:layout_height="200dp"
-                                android:background="@drawable/more_sell6">
-                                <ImageButton
-                                    android:id="@+id/like_product6"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_black"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:padding="5dp"
-                                    android:visibility="visible"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-                                <ImageButton
-                                    android:id="@+id/like_red6"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:src="@drawable/like_red"
-                                    app:circularflow_radiusInDP="20dp"
-                                    android:visibility="gone"
-                                    android:padding="5dp"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:background="@drawable/background_like"/>
-
-                                <ImageView
-                                    android:id="@+id/ImgProduct6"
-                                    android:layout_width="80dp"
-                                    android:layout_height="100dp"
-                                    android:src="@drawable/logo"
-                                    app:layout_constraintTop_toBottomOf="@id/like_product6"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    android:layout_marginTop="5dp"/>
-
-                                <TextView
-                                    android:id="@+id/price6"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintTop_toTopOf="@id/like_product6"
-                                    app:layout_constraintBottom_toBottomOf="@id/like_product6"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    android:layout_marginRight="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="15sp"
-                                    android:text="100"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="10dp"
-                                    android:textColor="@color/white"
-                                    android:text="$"
-                                    app:layout_constraintTop_toTopOf="@id/price6"
-                                    app:layout_constraintBottom_toTopOf="@id/price6"
-                                    app:layout_constraintLeft_toLeftOf="@id/price6"
-                                    app:layout_constraintRight_toLeftOf="@id/price6"
-                                    android:layout_marginRight="10dp"
-                                    android:textStyle="italic|bold"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintRight_toRightOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/ImgProduct6"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_margin="10dp"
-                                    android:padding="10dp"
-                                    android:textColor="@color/white"
-                                    android:textSize="18sp"
-                                    android:text="جاكيت جينز ممزق"/>
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        </androidx.cardview.widget.CardView>
-
-
-
-
-
-
-
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvRecommended"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            android:nestedScrollingEnabled="false"/>
                     </LinearLayout>
                 </HorizontalScrollView>
-
-
-
-
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
-
-
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </FrameLayout>

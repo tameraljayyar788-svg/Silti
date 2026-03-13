@@ -19,13 +19,17 @@ public class CategorisInsideViewModel extends AndroidViewModel {
     }
 
     public void setCurrentSecondCategoryId(int secondCategoryId) {
-        currentSecondCategoryId.setValue(secondCategoryId);
-        categoriesBySecondCategory = categorisInsideRepository.getCategoriesBySecondCategory(secondCategoryId);
+        // ✅ استخدام postValue بدلاً من setValue
+        currentSecondCategoryId.postValue(secondCategoryId);
+        // ✅ لا تعيد تعيين categoriesBySecondCategory هنا
     }
 
-    // Read
     public LiveData<List<table_CategorisInside>> getCategoriesBySecondCategory() {
-        return categoriesBySecondCategory;
+        Integer id = currentSecondCategoryId.getValue();
+        if (id != null) {
+            return categorisInsideRepository.getCategoriesBySecondCategory(id);
+        }
+        return new MutableLiveData<>(null);
     }
 
     public LiveData<List<table_CategorisInside>> getAllCategoriesBySecondCategory(int secondCategoryId) {
@@ -36,7 +40,6 @@ public class CategorisInsideViewModel extends AndroidViewModel {
         return categorisInsideRepository.getCategoryById(categoryId);
     }
 
-    // Insert
     public void insert(String name, String icon) {
         Integer secondCategoryId = currentSecondCategoryId.getValue();
         if (secondCategoryId != null) {
@@ -56,7 +59,6 @@ public class CategorisInsideViewModel extends AndroidViewModel {
         categorisInsideRepository.insertAll(categories);
     }
 
-    // Update
     public void update(table_CategorisInside category) {
         categorisInsideRepository.update(category);
     }
@@ -69,7 +71,6 @@ public class CategorisInsideViewModel extends AndroidViewModel {
         categorisInsideRepository.updatePosition(categoryId, position);
     }
 
-    // Delete
     public void delete(table_CategorisInside category) {
         categorisInsideRepository.delete(category);
     }
@@ -82,7 +83,6 @@ public class CategorisInsideViewModel extends AndroidViewModel {
         categorisInsideRepository.deleteBySecondCategory(secondCategoryId);
     }
 
-    // Callbacks
     public void getActiveCountBySecondCategory(int secondCategoryId, CategorisInsideRepository.CountCallback callback) {
         categorisInsideRepository.getActiveCountBySecondCategory(secondCategoryId, callback);
     }

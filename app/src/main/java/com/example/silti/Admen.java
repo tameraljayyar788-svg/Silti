@@ -5,27 +5,24 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.PagerAdapter;
-
 import com.example.silti.databinding.ActivityAdmenBinding;
 import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Admen extends AppCompatActivity {
-
-
     private ActivityAdmenBinding binding;
-
 
     // ViewModels
     private FirstCategoryViewModel firstCategoryViewModel;
@@ -33,19 +30,33 @@ public class Admen extends AppCompatActivity {
     private CategorisInsideViewModel insideCategoryViewModel;
     private ProductViewModel productViewModel;
 
+    // Lists
+    private List<table_firstCategory> firstCategoryList = new ArrayList<>();
+    private List<table_secondCategory> secondCategoryList = new ArrayList<>();
+    private List<table_CategorisInside> insideCategoryList = new ArrayList<>();
+    private List<table_product> productList = new ArrayList<>();
+
+    // Adapters
+    private ArrayAdapter<String> firstCategoryAdapter1;
+    private ArrayAdapter<String> firstCategoryAdapter2;
+    private ArrayAdapter<String> secondCategoryAdapter1;
+    private ArrayAdapter<String> secondCategoryAdapter2;
+    private ArrayAdapter<String> insideCategoryAdapter;
+
     // Selected items
     private table_firstCategory selectedFirstCategory;
     private table_secondCategory selectedSecondCategory;
     private table_CategorisInside selectedInsideCategory;
-
-    // Lists for spinners
-    private List<table_firstCategory> firstCategoryList = new ArrayList<>();
-    private List<table_secondCategory> secondCategoryList = new ArrayList<>();
-    private List<table_CategorisInside> insideCategoryList = new ArrayList<>();
+    private table_product selectedProductForDiscount;
 
     // Image selection
     private Uri selectedImageUri;
     private String currentImagePath = "";
+
+    // قائمة التصنيفات الأساسية الستة
+    private final String[] DEFAULT_CATEGORIES = {
+            "موضة", "جمال", "كتب", "بيت", "رياضة", "إلكترونيات"
+    };
 
     // Image picker launcher
     private final ActivityResultLauncher<String> imagePickerLauncher =
@@ -68,6 +79,8 @@ public class Admen extends AppCompatActivity {
         checkAdminAccess();
         setupObservers();
         setupClickListeners();
+        setupTextWatchers();
+        initializeDefaultCategories();
     }
 
     private void initViewModels() {
@@ -88,144 +101,225 @@ public class Admen extends AppCompatActivity {
         }
     }
 
-    private void setupObservers() {
-        // Observe First Categories
+    private void initializeDefaultCategories() {
         firstCategoryViewModel.getAllActiveCategories().observe(this, categories -> {
-            if (categories != null && !categories.isEmpty()) {
+            if (categories == null || categories.isEmpty()) {
+                // إضافة التصنيفات الأساسية إذا لم تكن موجودة
+                for (int i = 0; i < DEFAULT_CATEGORIES.length; i++) {
+                    String categoryName = DEFAULT_CATEGORIES[i];
+                    String icon = getCategoryIcon(categoryName);
+                    table_firstCategory category = new table_firstCategory(
+                            0, categoryName, icon, i + 1, true, System.currentTimeMillis()
+                    );
+                    firstCategoryViewModel.insert(category);
+                }
+            }
+        });
+    }
+
+    private String getCategoryIcon(String categoryName) {
+        switch (categoryName) {
+            case "موضة": return "ic_fashion";
+            case "جمال": return "ic_beauty";
+            case "كتب": return "ic_books";
+            case "بيت": return "ic_home";
+            case "رياضة": return "ic_sports";
+            case "إلكترونيات": return "ic_electronics";
+            default: return "ic_category";
+        }
+    }
+
+    private void setupObservers() {
+        // مراقبة التصنيفات الأساسية
+        firstCategoryViewModel.getAllActiveCategories().observe(this, categories -> {
+            if (categories != null) {
                 firstCategoryList.clear();
                 firstCategoryList.addAll(categories);
                 updateFirstCategorySpinners();
             }
         });
 
-        // Observe Second Categories
+        // مراقبة جميع المنتجات
+        productViewModel.getAllProducts().observe(this, products -> {
+            if (products != null) {
+                productList.clear();
+                productList.addAll(products);
+            }
+        });
+    }
+
+    private void observeSecondCategories() {
         secondCategoryViewModel.getCategoriesByFirstCategory().observe(this, categories -> {
-            if (categories != null && !categories.isEmpty()) {
+            if (categories != null) {
                 secondCategoryList.clear();
                 secondCategoryList.addAll(categories);
                 updateSecondCategorySpinners();
-            } else {
-                secondCategoryList.clear();
-                updateSecondCategorySpinners();
             }
         });
+    }
 
-        // Observe Inside Categories
+    private void observeInsideCategories() {
         insideCategoryViewModel.getCategoriesBySecondCategory().observe(this, categories -> {
-            if (categories != null && !categories.isEmpty()) {
+            if (categories != null) {
                 insideCategoryList.clear();
                 insideCategoryList.addAll(categories);
-                updateInsideCategorySpinners();
-            } else {
-                insideCategoryList.clear();
                 updateInsideCategorySpinners();
             }
         });
     }
 
     private void setupClickListeners() {
-        // Logout
+        // تسجيل الخروج
         binding.logout.setOnClickListener(v -> showLogoutDialog());
 
-        // Toggle cards
+        // أزرار إظهار/إخفاء البطاقات
         binding.more1.setOnClickListener(v -> toggleCard(binding.card1));
         binding.more2.setOnClickListener(v -> toggleCard(binding.card2));
         binding.more3.setOnClickListener(v -> toggleCard(binding.card3));
         binding.more4.setOnClickListener(v -> toggleCard(binding.card4));
 
-        // Image selection
+        // اختيار الصورة
         binding.ImgProduct.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
 
-        // Add buttons
+        // أزرار الإضافة
         binding.addCategorySecond.setOnClickListener(v -> addSecondCategory());
         binding.addCategoryIn.setOnClickListener(v -> addInsideCategory());
         binding.addProduct.setOnClickListener(v -> addProduct());
         binding.addCategory.setOnClickListener(v -> addDiscount());
 
-        // First Category spinners
-        binding.spinerFirstCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+        // ========== البطاقة الأولى: إضافة تصنيف فرعي ==========
+        binding.spinerFirstCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 0 && position < firstCategoryList.size()) {
                     selectedFirstCategory = firstCategoryList.get(position);
-                    if (selectedFirstCategory != null) {
-                        secondCategoryViewModel.setCurrentFirstCategoryId(selectedFirstCategory.id);
-                    }
+                    binding.CategoryTextChoose.setText(selectedFirstCategory.name);
+                } else {
+                    selectedFirstCategory = null;
+                    binding.CategoryTextChoose.setText("التصنيف");
                 }
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent) {
                 selectedFirstCategory = null;
             }
         });
 
-        // Second Category spinners
-        binding.spinerCategorySecond.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+        // ========== البطاقة الثانية: إضافة تصنيف داخلي ==========
+        binding.spinerCategorySecond.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 0 && position < secondCategoryList.size()) {
                     selectedSecondCategory = secondCategoryList.get(position);
-                    if (selectedSecondCategory != null) {
-                        insideCategoryViewModel.setCurrentSecondCategoryId(selectedSecondCategory.id);
-                    }
+                    binding.CategoryTextChooseIn.setText(selectedSecondCategory.name);
+                } else {
+                    selectedSecondCategory = null;
+                    binding.CategoryTextChooseIn.setText("التصنيف");
                 }
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent) {
                 selectedSecondCategory = null;
             }
         });
 
-        // Inside Category spinners
-        binding.spinerCategoryIn.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+        // ========== البطاقة الثالثة: إضافة منتج ==========
+        // Spinner التصنيف الأساسي
+        binding.spinerFirstForProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0 && position < insideCategoryList.size()) {
-                    selectedInsideCategory = insideCategoryList.get(position);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position >= 0 && position < firstCategoryList.size()) {
+                    selectedFirstCategory = firstCategoryList.get(position);
+                    binding.TextChooseFirst.setText(selectedFirstCategory.name);
+
+                    if (selectedFirstCategory != null) {
+                        secondCategoryViewModel.setCurrentFirstCategoryId(selectedFirstCategory.id);
+                        observeSecondCategories();
+                    }
+                } else {
+                    selectedFirstCategory = null;
+                    binding.TextChooseFirst.setText("التصنيف الاساسي");
                 }
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedFirstCategory = null;
+            }
+        });
+
+        // Spinner التصنيف الفرعي
+        binding.spinerSecondForCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position >= 0 && position < secondCategoryList.size()) {
+                    selectedSecondCategory = secondCategoryList.get(position);
+                    binding.TextForSecond.setText(selectedSecondCategory.name);
+
+                    if (selectedSecondCategory != null) {
+                        insideCategoryViewModel.setCurrentSecondCategoryId(selectedSecondCategory.id);
+                        observeInsideCategories();
+                    }
+                } else {
+                    selectedSecondCategory = null;
+                    binding.TextForSecond.setText("التصنيف الفرعي");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedSecondCategory = null;
+            }
+        });
+
+        // Spinner التصنيف الداخلي
+        binding.spinerCategoryIn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position >= 0 && position < insideCategoryList.size()) {
+                    selectedInsideCategory = insideCategoryList.get(position);
+                    binding.CategoryTextIn.setText(selectedInsideCategory.name);
+                } else {
+                    selectedInsideCategory = null;
+                    binding.CategoryTextIn.setText("التصنيف الداخلي");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
                 selectedInsideCategory = null;
             }
         });
+    }
 
-        // Product First Category spinners
-        binding.spinerFirstForProduct.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+    private void setupTextWatchers() {
+        // ========== البطاقة الرابعة: البحث عن المنتج تلقائياً ==========
+        binding.nameproductForDis.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0 && position < firstCategoryList.size()) {
-                    selectedFirstCategory = firstCategoryList.get(position);
-                    if (selectedFirstCategory != null) {
-                        secondCategoryViewModel.setCurrentFirstCategoryId(selectedFirstCategory.id);
-                    }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 2) {
+                    searchProduct(s.toString());
                 }
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
-                selectedFirstCategory = null;
-            }
+            public void afterTextChanged(Editable s) {}
         });
+    }
 
-        // Product Second Category spinners
-        binding.spinerSecondForCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0 && position < secondCategoryList.size()) {
-                    selectedSecondCategory = secondCategoryList.get(position);
-                    if (selectedSecondCategory != null) {
-                        insideCategoryViewModel.setCurrentSecondCategoryId(selectedSecondCategory.id);
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
-                selectedSecondCategory = null;
+    private void searchProduct(String query) {
+        productViewModel.searchProducts(query).observe(this, products -> {
+            if (products != null && !products.isEmpty()) {
+                selectedProductForDiscount = products.get(0);
+                binding.oldPrice.setText(String.valueOf((int)selectedProductForDiscount.getPrice()));
+            } else {
+                selectedProductForDiscount = null;
+                binding.oldPrice.setText("");
             }
         });
     }
@@ -233,55 +327,66 @@ public class Admen extends AppCompatActivity {
     private void updateFirstCategorySpinners() {
         if (firstCategoryList.isEmpty()) return;
 
-        ArrayAdapter<table_firstCategory> adapter1 = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, firstCategoryList);
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinerFirstCategory.setAdapter(adapter1);
+        List<String> categoryNames = new ArrayList<>();
+        for (table_firstCategory category : firstCategoryList) {
+            categoryNames.add(category.name);
+        }
 
-        ArrayAdapter<table_firstCategory> adapter2 = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, firstCategoryList);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinerFirstForProduct.setAdapter(adapter2);
+        firstCategoryAdapter1 = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, categoryNames);
+        firstCategoryAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinerFirstCategory.setAdapter(firstCategoryAdapter1);
+
+        firstCategoryAdapter2 = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, categoryNames);
+        firstCategoryAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinerFirstForProduct.setAdapter(firstCategoryAdapter2);
     }
 
     private void updateSecondCategorySpinners() {
-        ArrayAdapter<table_secondCategory> adapter1;
-        if (secondCategoryList.isEmpty()) {
-            adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                    new ArrayList<table_secondCategory>());
-        } else {
-            adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, secondCategoryList);
+        List<String> categoryNames = new ArrayList<>();
+        for (table_secondCategory category : secondCategoryList) {
+            categoryNames.add(category.name);
         }
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinerCategorySecond.setAdapter(adapter1);
 
-        ArrayAdapter<table_secondCategory> adapter2;
-        if (secondCategoryList.isEmpty()) {
-            adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                    new ArrayList<table_secondCategory>());
-        } else {
-            adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, secondCategoryList);
-        }
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinerSecondForCategory.setAdapter(adapter2);
+        secondCategoryAdapter1 = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, categoryNames);
+        secondCategoryAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinerCategorySecond.setAdapter(secondCategoryAdapter1);
+
+        secondCategoryAdapter2 = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, categoryNames);
+        secondCategoryAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinerSecondForCategory.setAdapter(secondCategoryAdapter2);
     }
 
     private void updateInsideCategorySpinners() {
-        ArrayAdapter<table_CategorisInside> adapter;
-        if (insideCategoryList.isEmpty()) {
-            adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                    new ArrayList<table_CategorisInside>());
-        } else {
-            adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, insideCategoryList);
+        List<String> categoryNames = new ArrayList<>();
+        for (table_CategorisInside category : insideCategoryList) {
+            categoryNames.add(category.name);
         }
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinerCategoryIn.setAdapter(adapter);
+
+        insideCategoryAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, categoryNames);
+        insideCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinerCategoryIn.setAdapter(insideCategoryAdapter);
+
+        // إذا كانت القائمة فارغة، نعرض رسالة
+        if (insideCategoryList.isEmpty()) {
+            List<String> emptyList = new ArrayList<>();
+            emptyList.add("لا توجد تصنيفات داخلية");
+            ArrayAdapter<String> tempAdapter = new ArrayAdapter<>(
+                    this, android.R.layout.simple_spinner_item, emptyList);
+            tempAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.spinerCategoryIn.setAdapter(tempAdapter);
+        }
     }
 
     private void toggleCard(View card) {
         card.setVisibility(card.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
+    // ========== البطاقة الأولى: إضافة تصنيف فرعي ==========
     private void addSecondCategory() {
         String name = binding.nameCategorySecond.getText().toString().trim();
 
@@ -295,15 +400,18 @@ public class Admen extends AppCompatActivity {
             return;
         }
 
-        // Create and insert second category
         table_secondCategory category = new table_secondCategory(name, selectedFirstCategory.id, "");
         secondCategoryViewModel.insert(category);
 
-        showSuccess("تم إضافة التصنيف الفرعي");
+        secondCategoryViewModel.setCurrentFirstCategoryId(selectedFirstCategory.id);
+        observeSecondCategories();
+
+        showSuccess("تم إضافة التصنيف الفرعي: " + name + " إلى قسم " + selectedFirstCategory.name);
         binding.nameCategorySecond.setText("");
         binding.card1.setVisibility(View.GONE);
     }
 
+    // ========== البطاقة الثانية: إضافة تصنيف داخلي (معدلة) ==========
     private void addInsideCategory() {
         String name = binding.nameCategoryIn.getText().toString().trim();
 
@@ -317,17 +425,32 @@ public class Admen extends AppCompatActivity {
             return;
         }
 
-        // Get max position and insert
-        insideCategoryViewModel.getMaxPositionBySecondCategory(selectedSecondCategory.id,
+        final int secondCategoryId = selectedSecondCategory.id;
+        final String secondCategoryName = selectedSecondCategory.name;
+
+        // تعطيل الزر لمنع النقر المتكرر
+        binding.addCategoryIn.setEnabled(false);
+        binding.addCategoryIn.setText("جاري الإضافة...");
+
+        insideCategoryViewModel.getMaxPositionBySecondCategory(secondCategoryId,
                 new CategorisInsideRepository.PositionCallback() {
                     @Override
                     public void onResult(int maxPosition) {
                         table_CategorisInside category = new table_CategorisInside(
-                                selectedSecondCategory.id, name, "", maxPosition + 1);
+                                secondCategoryId, name, "", maxPosition + 1);
                         insideCategoryViewModel.insert(category);
 
                         runOnUiThread(() -> {
-                            showSuccess("تم إضافة التصنيف الداخلي");
+                            // إعادة تفعيل الزر
+                            binding.addCategoryIn.setEnabled(true);
+                            binding.addCategoryIn.setText("إضافة");
+
+                            // ✅ التعديل المهم: تحديث القائمة والـ Spinner
+                            insideCategoryViewModel.setCurrentSecondCategoryId(secondCategoryId);
+                            observeInsideCategories();
+
+                            showSuccess("تم إضافة التصنيف الداخلي: " + name +
+                                    " إلى قسم " + secondCategoryName);
                             binding.nameCategoryIn.setText("");
                             binding.card2.setVisibility(View.GONE);
                         });
@@ -335,11 +458,13 @@ public class Admen extends AppCompatActivity {
                 });
     }
 
+    // ========== البطاقة الثالثة: إضافة منتج ==========
     private void addProduct() {
         String name = binding.nameProduct.getText().toString().trim();
         String priceStr = binding.PriceProduct.getText().toString().trim();
         String rateStr = binding.rateProduct.getText().toString().trim();
         String description = binding.discribtion.getText().toString().trim();
+        String customSizes = binding.enterSizes.getText().toString().trim();
 
         if (name.isEmpty()) {
             showError("الرجاء إدخال اسم المنتج");
@@ -377,7 +502,15 @@ public class Admen extends AppCompatActivity {
 
             productViewModel.insertProduct(product);
 
-            showSuccess("تم إضافة المنتج بنجاح");
+            String categoryPath = selectedFirstCategory.name;
+            if (selectedSecondCategory != null) {
+                categoryPath += " → " + selectedSecondCategory.name;
+            }
+            if (selectedInsideCategory != null) {
+                categoryPath += " → " + selectedInsideCategory.name;
+            }
+
+            showSuccess("تم إضافة المنتج: " + name + " إلى " + categoryPath);
             clearProductFields();
             binding.card3.setVisibility(View.GONE);
 
@@ -386,18 +519,22 @@ public class Admen extends AppCompatActivity {
         }
     }
 
+    // ========== البطاقة الرابعة: إضافة خصم ==========
     private void addDiscount() {
-        String productName = binding.nameproductForDis.getText().toString().trim();
-        String oldPriceStr = binding.oldPrice.getText().toString().trim();
         String newPriceStr = binding.newPrice.getText().toString().trim();
 
-        if (productName.isEmpty() || oldPriceStr.isEmpty() || newPriceStr.isEmpty()) {
-            showError("الرجاء إدخال جميع البيانات");
+        if (selectedProductForDiscount == null) {
+            showError("الرجاء إدخال اسم منتج صحيح");
+            return;
+        }
+
+        if (newPriceStr.isEmpty()) {
+            showError("الرجاء إدخال السعر الجديد");
             return;
         }
 
         try {
-            double oldPrice = Double.parseDouble(oldPriceStr);
+            double oldPrice = selectedProductForDiscount.getPrice();
             double newPrice = Double.parseDouble(newPriceStr);
 
             if (newPrice >= oldPrice) {
@@ -407,31 +544,19 @@ public class Admen extends AppCompatActivity {
 
             double discount = ((oldPrice - newPrice) / oldPrice) * 100;
 
-            if (discount < 0 || discount > 100) {
-                showError("نسبة الخصم غير صحيحة");
-                return;
-            }
+            selectedProductForDiscount.setDiscount(discount);
+            selectedProductForDiscount.setPrice(newPrice);
 
-            final double discountFinal = discount;
+            productViewModel.updateProduct(selectedProductForDiscount);
 
-            // Search for product
-            productViewModel.searchProducts(productName).observe(this, products -> {
-                if (products != null && !products.isEmpty()) {
-                    table_product product = products.get(0);
-                    product.setDiscount(discountFinal);
-                    product.setPrice(newPrice);
+            showSuccess("تم إضافة خصم " + String.format("%.0f", discount) +
+                    "% على المنتج: " + selectedProductForDiscount.getName());
 
-                    productViewModel.updateProduct(product);
-
-                    showSuccess("تم إضافة الخصم بنجاح");
-                    binding.nameproductForDis.setText("");
-                    binding.oldPrice.setText("");
-                    binding.newPrice.setText("");
-                    binding.card4.setVisibility(View.GONE);
-                } else {
-                    showError("المنتج غير موجود");
-                }
-            });
+            binding.nameproductForDis.setText("");
+            binding.oldPrice.setText("");
+            binding.newPrice.setText("");
+            binding.card4.setVisibility(View.GONE);
+            selectedProductForDiscount = null;
 
         } catch (NumberFormatException e) {
             showError("الرجاء إدخال أرقام صحيحة");
@@ -443,6 +568,7 @@ public class Admen extends AppCompatActivity {
         binding.PriceProduct.setText("");
         binding.rateProduct.setText("");
         binding.discribtion.setText("");
+        binding.enterSizes.setText("");
 
         binding.small.setChecked(false);
         binding.Larg.setChecked(false);
@@ -457,15 +583,15 @@ public class Admen extends AppCompatActivity {
 
     private void showError(String message) {
         Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_SHORT)
-                .setBackgroundTint(getColor(R.color.red))
-                .setTextColor(getColor(R.color.white))
+                .setBackgroundTint(getColor(android.R.color.holo_red_dark))
+                .setTextColor(getColor(android.R.color.white))
                 .show();
     }
 
     private void showSuccess(String message) {
         Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_SHORT)
                 .setBackgroundTint(getColor(R.color.primary))
-                .setTextColor(getColor(R.color.white))
+                .setTextColor(getColor(android.R.color.white))
                 .show();
     }
 
