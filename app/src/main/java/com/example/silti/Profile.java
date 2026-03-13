@@ -1,45 +1,43 @@
 package com.example.silti;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.example.silti.databinding.FragmentProfileBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Profile#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Profile extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     private FragmentProfileBinding binding;
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    // ViewModels
+    private UserViewModel userViewModel;
+    private FavoriteViewModel favoriteViewModel;
+    private long currentUserId;
+    private User currentUser;
 
     public Profile() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Profile.
-     */
-    // TODO: Rename and change types and number of parameters
     public static Profile newInstance(String param1, String param2) {
         Profile fragment = new Profile();
         Bundle args = new Bundle();
@@ -59,9 +57,78 @@ public class Profile extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        initViewModels();
+        getCurrentUser();
+        loadUserData();
+        setupClickListeners();
+    }
+
+    private void initViewModels() {
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        favoriteViewModel = new ViewModelProvider(requireActivity()).get(FavoriteViewModel.class);
+    }
+
+    private void getCurrentUser() {
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyCartPrefs", Context.MODE_PRIVATE);
+        currentUserId = prefs.getLong("userId", -1);
+
+        if (currentUserId == -1) {
+            Toast.makeText(requireContext(), "الرجاء تسجيل الدخول أولاً", Toast.LENGTH_SHORT).show();
+            navigateToLogin();
+        }
+    }
+
+    private void loadUserData() {
+        userViewModel.getUserById(currentUserId).observe(getViewLifecycleOwner(), user -> {
+            if (user != null) {
+                currentUser = user;
+
+                // عرض اسم المستخدم
+                binding.name.setText(user.getUsername());
+
+                // عرض البريد الإلكتروني
+                if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+                    binding.link.setText(user.getEmail());
+                } else {
+                    binding.link.setText("إضافة البريد الإلكتروني");
+                }
+
+                // تحميل صورة الملف الشخصي
+                if (user.getImageProfile() != null && !user.getImageProfile().isEmpty()) {
+                    Glide.with(requireContext())
+                            .load(user.getImageProfile())
+                            .placeholder(R.drawable.profile_defult)
+                            .error(R.drawable.profile_defult)
+                            .circleCrop()
+                            .into(binding.imgProfile);
+                } else {
+                    binding.imgProfile.setImageResource(R.drawable.profile_defult);
+                }
+            }
+        });
+
+        // تحميل عدد المنتجات في المفضلة
+        favoriteViewModel.getFavoritesCount().observe(getViewLifecycleOwner(), count -> {
+            if (count != null && count > 0) {
+                // يمكن إضافة عداد بجانب أيقونة المفضلة إذا أردت
+                // binding.favoriteBadge.setText(String.valueOf(count));
+                // binding.favoriteBadge.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void setupClickListeners() {
+        // طلباتي - الانتقال إلى شاشة الطلبات
         binding.talabty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,6 +136,8 @@ public class Profile extends Fragment {
                 startActivity(intent);
             }
         });
+
+        // الإعدادات - الانتقال إلى شاشة الإعدادات
         binding.setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,6 +145,8 @@ public class Profile extends Fragment {
                 startActivity(intent);
             }
         });
+
+        // أعجبني - الانتقال إلى شاشة المفضلة
         binding.like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,6 +154,8 @@ public class Profile extends Fragment {
                 startActivity(intent);
             }
         });
+
+        // طريقة الدفع - الانتقال إلى شاشة بيانات الدفع
         binding.payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,10 +164,71 @@ public class Profile extends Fragment {
             }
         });
 
+        // تقييم التطبيق
+        binding.rating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showRatingDialog();
+            }
+        });
 
+        // تسجيل الخروج
+        binding.logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLogoutDialog();
+            }
+        });
+    }
 
+    private void showRatingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("تقييم التطبيق")
+                .setMessage("شكراً لاستخدامك تطبيق سلتي! هل تريد تقييم التطبيق؟")
+                .setPositiveButton("تقييم الآن", (dialog, which) -> {
+                    // فتح رابط التقييم على متجر Google Play
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("market://details?id=" + requireContext().getPackageName())));
+                    } catch (Exception e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://play.google.com/store/apps/details?id=" + requireContext().getPackageName())));
+                    }
+                })
+                .setNegativeButton("لاحقاً", null)
+                .show();
+    }
 
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("تسجيل الخروج")
+                .setMessage("هل أنت متأكد من تسجيل الخروج؟")
+                .setPositiveButton("نعم", (dialog, which) -> {
+                    logout();
+                })
+                .setNegativeButton("لا", null)
+                .show();
+    }
 
-        return binding.getRoot();
+    private void logout() {
+        // مسح بيانات الجلسة
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyCartPrefs", Context.MODE_PRIVATE);
+        prefs.edit().clear().apply();
+
+        // العودة إلى شاشة تسجيل الدخول
+        navigateToLogin();
+    }
+
+    private void navigateToLogin() {
+        Intent intent = new Intent(requireContext(), login.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

@@ -34,7 +34,7 @@ public class Main extends AppCompatActivity {
 
 
         manager = getSupportFragmentManager();
-        binding.navigation.setSelectedItemId(R.id.Home);
+        binding.navigation.setSelectedItemId(R.id.HomeScreen);
         addFragment(new HomeFragment());
 
 
@@ -42,7 +42,7 @@ public class Main extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                if (item.getItemId() == R.id.Home){
+                if (item.getItemId() == R.id.HomeScreen){
                     addFragment(new HomeFragment() );
                 } else if (item.getItemId() == R.id.cart) {
                     addFragment(new Cart());

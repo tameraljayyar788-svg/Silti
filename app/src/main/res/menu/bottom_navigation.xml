@@ -22,7 +22,7 @@
         android:icon="@drawable/cart"/>
 
     <item
-        android:id="@+id/Home"
+        android:id="@+id/HomeScreen"
         android:title="الصفحة الرئيسية"
         android:icon="@drawable/home"/>
 

@@ -30,12 +30,12 @@
             android:layout_marginTop="20dp"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:text="Tamer Aljayyar"
+            android:text="Usename"
             android:fontFamily="@font/bold"/>
         <ImageView
             android:id="@+id/linkIcon"
-            android:layout_width="15sp"
-            android:layout_height="15sp"
+            android:layout_width="13sp"
+            android:layout_height="13sp"
             android:src="@drawable/link"
             app:layout_constraintTop_toTopOf="@id/link"
             app:layout_constraintBottom_toBottomOf="@id/link"
@@ -52,7 +52,7 @@
             app:layout_constraintTop_toBottomOf="@id/name"
             android:layout_marginTop="10dp"
             android:textColor="#047870"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:layout_marginStart="30sp"
             android:text="إضافة رابط الإيميل"
             android:fontFamily="@font/bold"/>
