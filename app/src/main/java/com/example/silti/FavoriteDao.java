@@ -33,5 +33,7 @@ public interface FavoriteDao {
 
     @Query("SELECT COUNT(*) FROM favorites WHERE userId = :userId")
     LiveData<Integer> getFavoritesCount(long userId);
+
+
 }
 

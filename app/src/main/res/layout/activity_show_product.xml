@@ -7,126 +7,130 @@
     android:layout_height="match_parent"
     tools:context=".Show_Product"
     android:background="@color/white">
-<!--
 
+    <!-- عنوان الشاشة -->
+    <TextView
+        android:id="@+id/titleCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="موضة"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:fontFamily="@font/tajwal"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="العنوان"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:fontFamily="@font/tajwal"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:lastBaselineToBottomHeight=""
-            app:layout_constraintEnd_toEndOf="parent"/>
+    <!-- زر العودة -->
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/back"
+        android:padding="4dp"
+        app:layout_constraintTop_toTopOf="@id/titleCategory"
+        app:layout_constraintBottom_toBottomOf="@id/titleCategory"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="16dp"/>
 
+    <!-- شريط البحث -->
+    <EditText
+        android:id="@+id/searchInCategory"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="بحث على منتجات"
+        android:drawableRight="@drawable/search"
+        android:drawablePadding="8dp"
+        android:padding="10dp"
+        android:background="@drawable/search_background"
+        android:textColorHint="#7D7D7D"
+        app:layout_constraintTop_toBottomOf="@id/titleCategory"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-            <ImageView
-                android:id="@+id/back"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/back"
-                android:layout_marginEnd="15dp"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="15dp"/>
+    <!-- شريط التصنيفات الفرعية (أفقي) -->
+    <TextView
+        android:id="@+id/tvSubCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="التصنيفات الفرعية"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/searchInCategory"
+        app:layout_constraintStart_toStartOf="parent"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSubCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/tvSubCategories"
+        android:nestedScrollingEnabled="false"/>
 
-
-
+    <!-- خط فاصل -->
     <View
-        android:id="@+id/divider"
+        android:id="@+id/divider1"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#E0E0E0"
-        app:layout_constraintTop_toBottomOf="@id/title" />
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/rvSubCategories"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- شريط التصنيفات الداخلية (أفقي) -->
+    <TextView
+        android:id="@+id/tvInsideCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="اختر القسم"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/divider1"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvInsideCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/tvInsideCategories"
+        android:nestedScrollingEnabled="false"/>
+
+    <!-- خط فاصل -->
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/rvInsideCategories"/>
+
+    <!-- RecyclerView للمنتجات -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvProducts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/divider"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="8dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        app:layout_constraintTop_toBottomOf="@id/divider2"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSubCategories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:reverseLayout="true"
-            android:stackFromEnd="true"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"
-            android:layout_marginHorizontal="16dp"
-            app:layout_constraintTop_toBottomOf="@id/rvSubCategories" />
-
-        <TextView
-            android:id="@+id/tvInsideCategoriesTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="اختر الصنف"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:fontFamily="@font/tajwal"
-            android:textStyle="bold"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/divider2"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvInsideCategories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:reverseLayout="true"
-            android:stackFromEnd="true"
-            app:layout_constraintTop_toBottomOf="@id/tvInsideCategoriesTitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <View
-            android:id="@+id/divider3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"
-            android:layout_marginHorizontal="16dp"
-            app:layout_constraintTop_toBottomOf="@id/rvInsideCategories" />
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvProducts"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:paddingHorizontal="8dp"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
-            app:layout_constraintTop_toBottomOf="@id/divider3"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
--->
 </androidx.constraintlayout.widget.ConstraintLayout>

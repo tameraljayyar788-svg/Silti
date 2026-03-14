@@ -89,7 +89,7 @@ public class Offers extends Fragment {
         offersAdapter = new OffersAdapter(new ArrayList<>(), new OffersAdapter.OnOfferClickListener() {
             @Override
             public void onOfferClick(table_product product) {
-                Intent intent = new Intent(requireContext(), MainProduct.class);
+                Intent intent = new Intent(requireContext(), Show_Product.class);
                 intent.putExtra("product_id", product.getId());
                 startActivity(intent);
             }

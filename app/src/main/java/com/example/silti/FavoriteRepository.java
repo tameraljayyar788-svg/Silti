@@ -75,5 +75,6 @@ public class FavoriteRepository {
         });
     }
 
+
     public interface FavoriteCheckCallback { void onResult(boolean isFavorite); }
 }

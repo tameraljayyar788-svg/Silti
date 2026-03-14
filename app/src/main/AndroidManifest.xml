@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Silti">
         <activity
+            android:name=".MainProduct"
+            android:exported="false" />
+        <activity
             android:name=".Notifications"
             android:exported="false" />
         <activity
@@ -39,9 +42,6 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainProduct"
             android:exported="false" />
         <activity
             android:name=".Main"

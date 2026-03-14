@@ -8,197 +8,303 @@
     tools:context=".MainProduct"
     android:background="@color/white">
 
+    <!-- زر العودة -->
     <ImageView
         android:id="@+id/back"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:src="@drawable/back"
+        android:padding="4dp"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="15dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginRight="15dp"
-        />
+        android:background="?selectableItemBackgroundBorderless"/>
+
+    <!-- زر السلة -->
     <ImageView
         android:id="@+id/cart"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:src="@drawable/black_cart"
+        android:padding="4dp"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="15dp"
-        />
+        android:background="?selectableItemBackgroundBorderless"/>
 
+    <!-- صورة المنتج الرئيسية -->
     <ImageView
         android:id="@+id/img_product"
         android:layout_width="250dp"
         android:layout_height="280dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo"
         app:layout_constraintTop_toBottomOf="@id/back"
-        android:background="@drawable/more_sell1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="30dp"/>
 
+    <!-- شارة الخصم (تظهر فقط إذا كان هناك خصم) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/discountBadge"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:cardCornerRadius="30dp"
+        android:visibility="gone"
+        android:backgroundTint="#FF4444"
+        app:layout_constraintTop_toTopOf="@id/img_product"
+        app:layout_constraintRight_toRightOf="@id/img_product"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp">
+
+        <TextView
+            android:id="@+id/tvDiscountPercent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="10%"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- خط فاصل -->
     <View
         android:id="@+id/line"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        app:layout_constraintTop_toBottomOf="@id/img_product"
-        android:background="@color/black"
-        android:layout_margin="15dp"/>
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/img_product"/>
 
+    <!-- اسم المنتج -->
     <TextView
         android:id="@+id/name_product"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintEnd_toStartOf="@id/favoriteBtn"
+        android:layout_marginEnd="8dp"
         app:layout_constraintTop_toBottomOf="@id/line"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="16dp"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="22sp"
+        android:textStyle="bold"
         android:text="اسم المنتج"
-        android:layout_marginRight="15dp"
-        />
+        android:maxLines="2"
+        android:ellipsize="end"/>
 
+    <!-- زر المفضلة -->
+    <ImageView
+        android:id="@+id/favoriteBtn"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/like_black"
+        android:padding="6dp"
+        android:background="@drawable/background_like"
+        app:layout_constraintTop_toTopOf="@id/name_product"
+        app:layout_constraintBottom_toBottomOf="@id/name_product"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="16dp"/>
 
+    <!-- تقييم المنتج (نجوم) -->
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:rating="4"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:isIndicator="true"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/name_product"
+        app:layout_constraintStart_toStartOf="@id/name_product"/>
+
+    <!-- RecyclerView للوصف والتفاصيل -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dataProduct"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        app:layout_constraintTop_toBottomOf="@id/name_product"
-        />
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/ratingBar"
+        app:layout_constraintBottom_toTopOf="@id/cardBottom"/>
 
-
-
-
-
-
+    <!-- البطاقة السفلية (السعر والكمية وزر الشراء) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cardBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/card_pice_mainproduct"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:padding="10dp"
-        >
+        android:padding="16dp"
+        android:elevation="8dp">
 
-
+        <!-- السعر -->
         <TextView
             android:id="@+id/textPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="18sp"
-            android:text="السعر"
-            android:layout_marginRight="5dp"
+            android:textSize="16sp"
+            android:text="السعر:"
+            android:layout_marginEnd="8dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 
+        <!-- السعر القديم (يظهر فقط مع الخصم) -->
         <TextView
             android:id="@+id/oldPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="120"
-            app:layout_constraintTop_toTopOf="@id/textPrice"
             android:textColor="#838383"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="20sp"
             android:textSize="16sp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:textColor="@color/black"
-            android:text="$"
-            app:layout_constraintTop_toTopOf="@id/oldPrice"
-            app:layout_constraintRight_toRightOf="@id/oldPrice"
-            android:layout_marginRight="30dp"
-            android:textStyle="italic|bold"/>
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/textPrice"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="16dp"/>
 
+        <!-- خط الشطب على السعر القديم -->
         <com.google.android.material.internal.BaselineLayout
+            android:id="@+id/strikeLine"
             android:layout_width="30dp"
             android:layout_height="1dp"
+            android:background="@color/black"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="@id/oldPrice"
             app:layout_constraintBottom_toBottomOf="@id/oldPrice"
-            android:background="@color/black"
             app:layout_constraintStart_toStartOf="@id/oldPrice"/>
+
+        <!-- السعر الجديد (بعد الخصم) -->
         <TextView
             android:id="@+id/newPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="100"
-            app:layout_constraintTop_toTopOf="@id/textPrice"
             android:textColor="#00CB14"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/textPrice"
             app:layout_constraintLeft_toRightOf="@id/oldPrice"
-            android:layout_marginLeft="20sp"
-            android:textSize="16sp"
-            />
+            android:layout_marginStart="16dp"/>
+
+        <!-- السعر العادي (عند عدم وجود خصم) -->
         <TextView
+            android:id="@+id/regularPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10dp"
+            android:text="120"
             android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="@id/textPrice"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="16dp"/>
+
+        <!-- رمز العملة للسعر العادي -->
+        <TextView
+            android:id="@+id/currencyRegular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="$"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="@id/regularPrice"
+            app:layout_constraintBottom_toBottomOf="@id/regularPrice"
+            app:layout_constraintLeft_toRightOf="@id/regularPrice"
+            android:layout_marginStart="2dp"/>
+
+        <!-- رمز العملة للسعر الجديد -->
+        <TextView
+            android:id="@+id/currencyNew"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$"
+            android:textColor="#00CB14"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="@id/newPrice"
-            app:layout_constraintRight_toRightOf="@id/newPrice"
-            android:layout_marginRight="30dp"
-            android:textStyle="italic|bold"/>
+            app:layout_constraintBottom_toBottomOf="@id/newPrice"
+            app:layout_constraintLeft_toRightOf="@id/newPrice"
+            android:layout_marginStart="2dp"/>
 
-
+        <!-- زر الشراء المباشر -->
         <Button
             android:id="@+id/button_sell"
             android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="شراء الأن"
+            android:layout_height="45dp"
+            android:text="شراء الآن"
             android:textColor="@color/white"
             android:background="@drawable/button_login"
-            app:layout_constraintRight_toRightOf="@id/textPrice"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textPrice"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="12dp"/>
 
+        <!-- التحكم في الكمية -->
         <LinearLayout
+            android:id="@+id/quantityLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dp"
-            app:layout_constraintLeft_toLeftOf="@id/oldPrice"
+            android:padding="4dp"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@id/button_sell"
             app:layout_constraintBottom_toBottomOf="@id/button_sell"
-            >
+            android:layout_marginEnd="16dp">
+
             <Button
-                android:id="@+id/minus"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:id="@+id/plus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="@drawable/background_like"
                 android:textColor="@color/black"
-                android:textSize="18sp"
-                android:layout_margin="5dp"
-                android:text="-"
-                />
+                android:textSize="20sp"
+                android:text="+"
+                android:gravity="center"/>
 
             <TextView
                 android:id="@+id/quantity"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="@drawable/background_like"
-                android:layout_margin="5dp"
+                android:layout_marginHorizontal="4dp"
                 android:text="1"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                android:layout_gravity="center"
                 android:gravity="center"/>
+
             <Button
-                android:id="@+id/plus"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:id="@+id/minus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="@drawable/background_like"
                 android:textColor="@color/black"
-                android:layout_margin="5dp"
-                android:textSize="18sp"
-                android:text="+"/>
+                android:textSize="20sp"
+                android:text="-"
+                android:gravity="center"/>
         </LinearLayout>
+
+        <!-- زر إضافة إلى السلة (اختياري) -->
+        <Button
+            android:id="@+id/addToCart"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:text="إضافة إلى السلة"
+            android:textColor="@color/white"
+            android:background="@drawable/button_login"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/button_sell"
+            android:layout_marginTop="8dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

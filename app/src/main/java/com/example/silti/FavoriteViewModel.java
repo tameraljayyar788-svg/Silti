@@ -83,4 +83,7 @@ public class FavoriteViewModel extends AndroidViewModel {
     public void deleteFavorite(table_faivorate favorite) {
         favoriteRepository.deleteFavorite(favorite);
     }
+    public void isFavorite(long userId, long productId, FavoriteRepository.FavoriteCheckCallback callback) {
+        favoriteRepository.isFavorite(userId, productId, callback);
+    }
 }

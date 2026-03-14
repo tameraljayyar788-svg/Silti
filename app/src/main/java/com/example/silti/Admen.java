@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.silti.databinding.ActivityAdmenBinding;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +56,7 @@ public class Admen extends AppCompatActivity {
 
     // Image selection
     private Uri selectedImageUri;
-    private String currentImagePath = "";
+    private String savedImagePath = "";
 
     // قائمة التصنيفات الأساسية الستة
     private final String[] DEFAULT_CATEGORIES = {
@@ -63,8 +68,9 @@ public class Admen extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
                 if (uri != null) {
                     selectedImageUri = uri;
-                    currentImagePath = uri.toString();
+                    // عرض الصورة مؤقتاً
                     binding.ImgProduct.setImageURI(uri);
+                    Toast.makeText(this, "تم اختيار الصورة", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -178,7 +184,7 @@ public class Admen extends AppCompatActivity {
         binding.more3.setOnClickListener(v -> toggleCard(binding.card3));
         binding.more4.setOnClickListener(v -> toggleCard(binding.card4));
 
-        // اختيار الصورة
+        // اختيار الصورة - تعديل لفتح معرض الصور
         binding.ImgProduct.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
 
         // أزرار الإضافة
@@ -411,7 +417,7 @@ public class Admen extends AppCompatActivity {
         binding.card1.setVisibility(View.GONE);
     }
 
-    // ========== البطاقة الثانية: إضافة تصنيف داخلي (معدلة) ==========
+    // ========== البطاقة الثانية: إضافة تصنيف داخلي ==========
     private void addInsideCategory() {
         String name = binding.nameCategoryIn.getText().toString().trim();
 
@@ -445,7 +451,7 @@ public class Admen extends AppCompatActivity {
                             binding.addCategoryIn.setEnabled(true);
                             binding.addCategoryIn.setText("إضافة");
 
-                            // ✅ التعديل المهم: تحديث القائمة والـ Spinner
+                            // تحديث القائمة والـ Spinner
                             insideCategoryViewModel.setCurrentSecondCategoryId(secondCategoryId);
                             observeInsideCategories();
 
@@ -458,7 +464,7 @@ public class Admen extends AppCompatActivity {
                 });
     }
 
-    // ========== البطاقة الثالثة: إضافة منتج ==========
+    // ========== البطاقة الثالثة: إضافة منتج مع حفظ الصورة ==========
     private void addProduct() {
         String name = binding.nameProduct.getText().toString().trim();
         String priceStr = binding.PriceProduct.getText().toString().trim();
@@ -485,6 +491,16 @@ public class Admen extends AppCompatActivity {
             double price = Double.parseDouble(priceStr);
             int rate = rateStr.isEmpty() ? 0 : Integer.parseInt(rateStr);
 
+            // ✅ حفظ الصورة إذا تم اختيارها
+            String imagePathToSave = "";
+            if (selectedImageUri != null) {
+                imagePathToSave = saveImageToInternalStorage(selectedImageUri);
+                if (imagePathToSave.isEmpty()) {
+                    showError("فشل في حفظ الصورة");
+                    return;
+                }
+            }
+
             table_product product = new table_product();
             product.setName(name);
             product.setPrice(price);
@@ -496,7 +512,7 @@ public class Admen extends AppCompatActivity {
             product.setActive(true);
             product.setFeatured(false);
             product.setQuantity(100);
-            product.setImage(currentImagePath);
+            product.setImage(imagePathToSave); // حفظ المسار الحقيقي للصورة
             product.setDiscount(0);
             product.setSoldCount(0);
 
@@ -516,6 +532,47 @@ public class Admen extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             showError("الرجاء إدخال أرقام صحيحة");
+        }
+    }
+
+    // ✅ دالة جديدة لحفظ الصورة في التخزين الداخلي للتطبيق
+    private String saveImageToInternalStorage(Uri imageUri) {
+        try {
+            // إنشاء اسم ملف فريد
+            String fileName = "product_" + System.currentTimeMillis() + ".jpg";
+
+            // فتح مجلد الصور الخاص بالتطبيق
+            File imagesDir = new File(getFilesDir(), "product_images");
+            if (!imagesDir.exists()) {
+                imagesDir.mkdirs();
+            }
+
+            // إنشاء الملف الكامل
+            File imageFile = new File(imagesDir, fileName);
+
+            // نسخ محتوى الصورة
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            // إرجاع المسار النسبي للتخزين في قاعدة البيانات
+            String savedPath = imageFile.getAbsolutePath();
+            Log.d("Admen", "تم حفظ الصورة في: " + savedPath);
+
+            return savedPath;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("خطأ في حفظ الصورة: " + e.getMessage());
+            return "";
         }
     }
 
@@ -577,8 +634,8 @@ public class Admen extends AppCompatActivity {
         binding.XXXLarg.setChecked(false);
 
         binding.ImgProduct.setImageResource(R.drawable.add);
-        currentImagePath = "";
         selectedImageUri = null;
+        savedImagePath = "";
     }
 
     private void showError(String message) {

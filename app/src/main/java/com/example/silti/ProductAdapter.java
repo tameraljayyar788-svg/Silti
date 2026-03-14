@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public interface OnProductClickListener {
         void onProductClick(table_product product);
         void onFavoriteClick(table_product product, boolean isFavorite);
-
         void onAddToCartClick(table_product product);
     }
 
@@ -73,7 +73,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         private ImageView ImgProduct;
         private TextView name, price;
         private ImageButton like_product, like_red;
-        private TextView tvCurrency; // TextView الخاص بالدولار $
 
         ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,25 +85,23 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         void bind(table_product product) {
             name.setText(product.getName());
-            price.setText(String.valueOf((int)product.getPrice())); // تحويل إلى integer كما في التصميم
+            price.setText(String.valueOf((int)product.getPrice()));
 
-            // تحميل الصورة
             if (product.getImage() != null && !product.getImage().isEmpty()) {
                 Glide.with(itemView.getContext())
                         .load(product.getImage())
                         .placeholder(R.drawable.logo)
                         .error(R.drawable.logo)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(ImgProduct);
             } else {
                 ImgProduct.setImageResource(R.drawable.logo);
             }
 
-            // تحديث حالة الإعجاب
             boolean isFav = isFavorite(product.getId());
             like_product.setVisibility(isFav ? View.GONE : View.VISIBLE);
             like_red.setVisibility(isFav ? View.VISIBLE : View.GONE);
 
-            // Click listeners
             itemView.setOnClickListener(v -> listener.onProductClick(product));
 
             like_product.setOnClickListener(v -> {

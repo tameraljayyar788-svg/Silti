@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.silti.databinding.FragmentHomeBinding;
 
 import java.util.ArrayList;
@@ -31,7 +33,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class HomeFragment extends Fragment {
-
     private FragmentHomeBinding binding;
 
     // ViewModels
@@ -40,10 +41,11 @@ public class HomeFragment extends Fragment {
     private CartViewModel cartViewModel;
 
     // Adapters
-    private ProductAdapter recommendedAdapter;
+    private ProductAdapter recommendedAdapter;  // فقط للمنتجات المقترحة
 
     // Data lists
     private List<table_product> allProducts = new ArrayList<>();
+    private List<table_product> discountedProducts = new ArrayList<>();
     private List<table_faivorate> favoritesList = new ArrayList<>();
 
     // المنتج المعروض في الصورة الرئيسية
@@ -55,6 +57,7 @@ public class HomeFragment extends Fragment {
     // For discount rotation
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private ScheduledExecutorService scheduler;
+    private Random random = new Random();
 
     // مصفوفات لربط التصنيفات
     private final int[] CATEGORY_VIEWS = {
@@ -102,7 +105,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        // RecyclerView للمنتجات المقترحة
         recommendedAdapter = new ProductAdapter(new ArrayList<>(), new ProductAdapter.OnProductClickListener() {
             @Override
             public void onProductClick(table_product product) {
@@ -132,12 +134,15 @@ public class HomeFragment extends Fragment {
             startActivity(new Intent(requireContext(), Search.class));
         });
 
-        // ========== صورة العرض الرئيسية - تعرض منتج عشوائي عليه خصم ==========
+        // الصورة الرئيسية - تعرض منتج عشوائي عليه خصم
         binding.offersMain.setOnClickListener(v -> {
             if (currentMainOfferProduct != null) {
                 openProductDetails(currentMainOfferProduct);
             } else {
-                Toast.makeText(requireContext(), "لا توجد عروض حالياً", Toast.LENGTH_SHORT).show();
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameNavi, new Offers())
+                        .commit();
             }
         });
 
@@ -161,17 +166,20 @@ public class HomeFragment extends Fragment {
     private void loadData() {
         // تحميل جميع المنتجات
         productViewModel.getAllProducts().observe(getViewLifecycleOwner(), products -> {
-            if (products != null) {
+            if (products != null && !products.isEmpty()) {
                 allProducts.clear();
                 allProducts.addAll(products);
+
+                Log.d("HomeFragment", "تم تحميل " + products.size() + " منتج");
+
+                // تحديث المنتجات المخفضة
+                updateDiscountedProducts();
 
                 // تحديث المنتجات المقترحة
                 updateRecommendedProducts();
 
-                // تحديث الصورة الرئيسية إذا لم تكن محددة
-                if (currentMainOfferProduct == null && !allProducts.isEmpty()) {
-                    selectRandomProductForMainOffer();
-                }
+                // تحديث الصورة الرئيسية
+                updateMainOfferImage();
             }
         });
 
@@ -182,7 +190,6 @@ public class HomeFragment extends Fragment {
                     favoritesList.clear();
                     favoritesList.addAll(favorites);
 
-                    // تحديث حالة الإعجاب في الـ Adapter
                     if (recommendedAdapter != null) {
                         recommendedAdapter.updateFavorites(favoritesList);
                     }
@@ -238,87 +245,100 @@ public class HomeFragment extends Fragment {
         startActivity(intent);
     }
 
-    // ========== نظام تدوير الصورة الرئيسية ==========
+    // ========== تحديث الصورة الرئيسية ==========
 
-    private void startMainOfferRotation() {
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-
-        // تشغيل التحديث كل 4 ساعات (14400 ثانية)
-        scheduler.scheduleAtFixedRate(() -> {
-            selectRandomProductForMainOffer();
-        }, 0, 4, TimeUnit.HOURS);
-
-        // للاختبار: استخدم 10 ثواني
-        // scheduler.scheduleAtFixedRate(() -> {
-        //     selectRandomProductForMainOffer();
-        // }, 0, 10, TimeUnit.SECONDS);
-    }
-
-    private void selectRandomProductForMainOffer() {
-        if (allProducts.isEmpty()) return;
-
-        // اختيار منتج عشوائي من جميع المنتجات
-        Random random = new Random();
-        int randomIndex = random.nextInt(allProducts.size());
-        currentMainOfferProduct = allProducts.get(randomIndex);
-
-        // تحديث واجهة المستخدم في الخيط الرئيسي
-        mainHandler.post(() -> {
-            updateMainOfferImage(currentMainOfferProduct);
-        });
-    }
-
-    private void updateRecommendedProducts() {
-        // اختيار 5 منتجات عشوائية كمنتجات مقترحة
-        if (allProducts.size() <= 5) {
-            if (recommendedAdapter != null) {
-                recommendedAdapter.updateProducts(allProducts);
-            }
+    private void updateMainOfferImage() {
+        // إذا كان هناك منتجات مخفضة، اختر منها
+        if (!discountedProducts.isEmpty()) {
+            int randomIndex = random.nextInt(discountedProducts.size());
+            currentMainOfferProduct = discountedProducts.get(randomIndex);
+        }
+        // إذا لم يكن هناك منتجات مخفضة، اختر من جميع المنتجات
+        else if (!allProducts.isEmpty()) {
+            int randomIndex = random.nextInt(allProducts.size());
+            currentMainOfferProduct = allProducts.get(randomIndex);
+        }
+        // إذا لم يكن هناك منتجات نهائياً
+        else {
             return;
         }
 
-        Random random = new Random();
-        List<table_product> recommended = new ArrayList<>();
-        List<Integer> selectedIndices = new ArrayList<>();
-
-        while (recommended.size() < 5) {
-            int index = random.nextInt(allProducts.size());
-            if (!selectedIndices.contains(index)) {
-                selectedIndices.add(index);
-                recommended.add(allProducts.get(index));
-            }
-
-            // منع التكرار اللانهائي
-            if (selectedIndices.size() >= allProducts.size()) break;
-        }
-
-        if (recommendedAdapter != null) {
-            recommendedAdapter.updateProducts(recommended);
-        }
+        loadImageToOffersMain(currentMainOfferProduct);
     }
 
-    private void updateMainOfferImage(table_product product) {
+    private void loadImageToOffersMain(table_product product) {
         if (product == null) return;
 
-        // تحديث صورة العرض الرئيسي
+        Log.d("HomeFragment", "تحميل صورة للمنتج: " + product.getName() + ", المسار: " + product.getImage());
+
         if (product.getImage() != null && !product.getImage().isEmpty()) {
             Glide.with(requireContext())
                     .load(product.getImage())
                     .placeholder(R.drawable.newoffer)
                     .error(R.drawable.newoffer)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(binding.offersMain);
         } else {
             binding.offersMain.setImageResource(R.drawable.newoffer);
         }
 
-        // إضافة نص المنتج كـ ContentDescription
         binding.offersMain.setContentDescription(product.getName());
+    }
+
+    // ========== نظام تدوير الصورة الرئيسية كل 4 ساعات ==========
+
+    private void startMainOfferRotation() {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        // تشغيل التحديث كل 4 ساعات
+        scheduler.scheduleAtFixedRate(() -> {
+            if (!discountedProducts.isEmpty() || !allProducts.isEmpty()) {
+                mainHandler.post(() -> {
+                    updateMainOfferImage();
+                });
+            }
+        }, 4, 4, TimeUnit.HOURS);
+
+
+    }
+
+    // ========== تحديث المنتجات ==========
+
+    private void updateDiscountedProducts() {
+        discountedProducts.clear();
+        for (table_product product : allProducts) {
+            if (product.getDiscount() > 0) {
+                discountedProducts.add(product);
+            }
+        }
+        Log.d("HomeFragment", "منتجات مخفضة: " + discountedProducts.size());
+    }
+
+    private void updateRecommendedProducts() {
+        if (allProducts.isEmpty()) {
+            if (recommendedAdapter != null) {
+                recommendedAdapter.updateProducts(new ArrayList<>());
+            }
+            return;
+        }
+
+        // نأخذ أول 10 منتجات كمنتجات مقترحة
+        List<table_product> recommended = new ArrayList<>();
+        int count = Math.min(10, allProducts.size());
+
+        for (int i = 0; i < count; i++) {
+            recommended.add(allProducts.get(i));
+        }
+
+        if (recommendedAdapter != null) {
+            recommendedAdapter.updateProducts(recommended);
+            Log.d("HomeFragment", "منتجات مقترحة: " + recommended.size());
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // تحديث المفضلة عند العودة للشاشة
         if (currentUserId != -1 && favoriteViewModel != null) {
             favoriteViewModel.getFavoriteItems().removeObservers(getViewLifecycleOwner());
             favoriteViewModel.getFavoriteItems().observe(getViewLifecycleOwner(), favorites -> {
