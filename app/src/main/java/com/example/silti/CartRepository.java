@@ -9,24 +9,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CartRepository {
-    private CartDao cartDao;
+    private CartDao dao;
     private ExecutorService executorService;
 
     public CartRepository(Application application) {
         AppDataBase db = AppDataBase.getInstance(application);
-        cartDao = db.cartDao();
+        dao = db.cartDao();
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    // Insert
     public void insertCartItem(table_cart cartItem) {
         executorService.execute(() -> {
-            table_cart existing = cartDao.getCartItemByProductId(cartItem.getUserId(), cartItem.getProductId());
+            table_cart existing = dao.getCartItemByProductId(cartItem.getUserId(), cartItem.getProductId());
             if (existing != null) {
                 existing.setQuantity(existing.getQuantity() + cartItem.getQuantity());
-                cartDao.updateCartItem(existing);
+                dao.updateCartItem(existing);
             } else {
-                cartDao.insertCartItem(cartItem);
+                dao.insertCartItem(cartItem);
             }
         });
     }
@@ -34,63 +33,57 @@ public class CartRepository {
     public void addToCart(long userId, long productId, String name, double price,
                           String image, int quantity, String size) {
         executorService.execute(() -> {
-            table_cart existing = cartDao.getCartItemByProductId(userId, productId);
+            table_cart existing = dao.getCartItemByProductId(userId, productId);
             if (existing != null) {
                 existing.setQuantity(existing.getQuantity() + quantity);
-                cartDao.updateCartItem(existing);
+                dao.updateCartItem(existing);
             } else {
                 table_cart newItem = new table_cart(userId, productId, name, price, image, quantity, size);
-                cartDao.insertCartItem(newItem);
+                dao.insertCartItem(newItem);
             }
         });
     }
 
-    // Update
     public void updateCartItem(table_cart cartItem) {
-        executorService.execute(() -> cartDao.updateCartItem(cartItem));
-    }
-
-    public void deleteAllByUser(long userId) {
-        executorService.execute(() -> cartDao.clearCart(userId));  // clearCart موجودة بالفعل
+        executorService.execute(() -> dao.updateCartItem(cartItem));
     }
 
     public void updateQuantity(int cartItemId, int quantity) {
-        executorService.execute(() -> cartDao.updateQuantity(cartItemId, quantity));
+        executorService.execute(() -> dao.updateQuantity(cartItemId, quantity));
     }
 
-    // Delete
     public void deleteCartItem(table_cart cartItem) {
-        executorService.execute(() -> cartDao.deleteCartItem(cartItem));
+        executorService.execute(() -> dao.deleteCartItem(cartItem));
     }
 
     public void removeFromCart(long userId, long productId) {
-        executorService.execute(() -> cartDao.removeFromCart(userId, productId));
+        executorService.execute(() -> dao.removeFromCart(userId, productId));
     }
 
     public void clearCart(long userId) {
-        executorService.execute(() -> cartDao.clearCart(userId));
+        executorService.execute(() -> dao.clearCart(userId));
     }
 
-    // Read
     public LiveData<List<table_cart>> getCartItemsByUser(long userId) {
-        return cartDao.getCartItemsByUser(userId);
+        return dao.getCartItemsByUser(userId);
     }
 
     public LiveData<Integer> getCartItemCount(long userId) {
-        return cartDao.getCartItemCount(userId);
+        return dao.getCartItemCount(userId);
     }
 
     public LiveData<Double> getCartTotalPrice(long userId) {
-        return cartDao.getCartTotalPrice(userId);
+        return dao.getCartTotalPrice(userId);
     }
 
-    // Callback
     public void isInCart(long userId, long productId, CartCheckCallback callback) {
         executorService.execute(() -> {
-            boolean exists = cartDao.isInCart(userId, productId);
+            boolean exists = dao.isInCart(userId, productId);
             callback.onResult(exists);
         });
     }
 
-    public interface CartCheckCallback { void onResult(boolean exists); }
+    public interface CartCheckCallback {
+        void onResult(boolean exists);
+    }
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Silti." parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="colorPrimary">#05AEA8</item>
+        <item name="colorPrimaryDark">#04897F</item>
+        <item name="colorAccent">#05AEA8</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- No ActionBar theme -->
+    <style name="Theme.MyCart.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#05AEA8</item>
+        <item name="colorPrimaryDark">#04897F</item>
+        <item name="colorAccent">#05AEA8</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+</resources>

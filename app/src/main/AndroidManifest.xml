@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.silti"
+    >
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- للأندرويد 12 والإصدارات الأقدم -->
     <uses-permission
@@ -17,9 +20,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Silti">
         <activity
-            android:name=".MainProduct"
-            android:exported="false" />
-        <activity
             android:name=".Notifications"
             android:exported="false" />
         <activity
@@ -27,6 +27,9 @@
             android:exported="false" />
         <activity
             android:name=".ChoosePayMent"
+            android:exported="false" />
+        <activity
+            android:name=".PaymentMethod"
             android:exported="false" />
         <activity
             android:name=".EditProfile"
@@ -44,6 +47,9 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
+            android:name=".MainProduct"
+            android:exported="false" />
+        <activity
             android:name=".Main"
             android:exported="false" />
         <activity
@@ -51,13 +57,13 @@
             android:exported="false" />
         <activity
             android:name=".Setting"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Search"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Show_Product"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Splash_Screen"
             android:exported="true">

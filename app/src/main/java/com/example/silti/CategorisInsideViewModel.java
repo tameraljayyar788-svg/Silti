@@ -10,53 +10,58 @@ import java.util.List;
 
 public class CategorisInsideViewModel extends AndroidViewModel {
     private CategorisInsideRepository categorisInsideRepository;
-    private MutableLiveData<Integer> currentSecondCategoryId = new MutableLiveData<>();
-    private LiveData<List<table_CategorisInside>> categoriesBySecondCategory;
+
+    // للبطاقة الثالثة (إضافة منتج)
+    private MutableLiveData<Integer> currentSecondCategoryIdForCard3 = new MutableLiveData<>();
+    private LiveData<List<table_CategorisInside>> categoriesBySecondCategoryForCard3;
+
+    // للبطاقة الثانية (بعد إضافة تصنيف داخلي - للتحديث)
+    private MutableLiveData<Integer> currentSecondCategoryIdForUpdate = new MutableLiveData<>();
 
     public CategorisInsideViewModel(Application application) {
         super(application);
         categorisInsideRepository = new CategorisInsideRepository(application);
     }
 
-    public void setCurrentSecondCategoryId(int secondCategoryId) {
-        // ✅ استخدام postValue بدلاً من setValue
-        currentSecondCategoryId.postValue(secondCategoryId);
-        // ✅ لا تعيد تعيين categoriesBySecondCategory هنا
+    // ========== للبطاقة الثالثة (إضافة منتج) ==========
+    public void setCurrentSecondCategoryIdForCard3(int secondCategoryId) {
+        currentSecondCategoryIdForCard3.postValue(secondCategoryId);
+        categoriesBySecondCategoryForCard3 = categorisInsideRepository.getCategoriesBySecondCategory(secondCategoryId);
     }
 
-    public LiveData<List<table_CategorisInside>> getCategoriesBySecondCategory() {
-        Integer id = currentSecondCategoryId.getValue();
+    public LiveData<List<table_CategorisInside>> getCategoriesBySecondCategoryForCard3() {
+        return categoriesBySecondCategoryForCard3;
+    }
+
+    // ========== للبطاقة الثانية (بعد إضافة تصنيف داخلي) ==========
+    public void setCurrentSecondCategoryIdForUpdate(int secondCategoryId) {
+        currentSecondCategoryIdForUpdate.postValue(secondCategoryId);
+    }
+
+    public LiveData<List<table_CategorisInside>> getCategoriesBySecondCategoryForUpdate() {
+        Integer id = currentSecondCategoryIdForUpdate.getValue();
         if (id != null) {
             return categorisInsideRepository.getCategoriesBySecondCategory(id);
         }
         return new MutableLiveData<>(null);
     }
 
-    public LiveData<List<table_CategorisInside>> getAllCategoriesBySecondCategory(int secondCategoryId) {
-        return categorisInsideRepository.getAllCategoriesBySecondCategory(secondCategoryId);
-    }
-
-    public LiveData<table_CategorisInside> getCategoryById(int categoryId) {
-        return categorisInsideRepository.getCategoryById(categoryId);
-    }
-
-    public void insert(String name, String icon) {
-        Integer secondCategoryId = currentSecondCategoryId.getValue();
-        if (secondCategoryId != null) {
-            categorisInsideRepository.insertWithAutoPosition(secondCategoryId, name, icon);
-        }
-    }
-
+    // ========== دوال الإدراج والتحديث المشتركة ==========
     public void insert(table_CategorisInside category) {
         categorisInsideRepository.insert(category);
     }
 
     public void insert(int secondCategoryId, String name, String icon, int position) {
-        categorisInsideRepository.insert(secondCategoryId, name, icon, position);
+        table_CategorisInside category = new table_CategorisInside(secondCategoryId, name, icon, position);
+        categorisInsideRepository.insert(category);
     }
 
     public void insertAll(List<table_CategorisInside> categories) {
         categorisInsideRepository.insertAll(categories);
+    }
+
+    public void insertWithAutoPosition(int secondCategoryId, String name, String icon) {
+        categorisInsideRepository.insertWithAutoPosition(secondCategoryId, name, icon);
     }
 
     public void update(table_CategorisInside category) {
@@ -81,6 +86,14 @@ public class CategorisInsideViewModel extends AndroidViewModel {
 
     public void deleteBySecondCategory(int secondCategoryId) {
         categorisInsideRepository.deleteBySecondCategory(secondCategoryId);
+    }
+
+    public LiveData<table_CategorisInside> getCategoryById(int categoryId) {
+        return categorisInsideRepository.getCategoryById(categoryId);
+    }
+
+    public LiveData<List<table_CategorisInside>> getAllCategoriesBySecondCategory(int secondCategoryId) {
+        return categorisInsideRepository.getAllCategoriesBySecondCategory(secondCategoryId);
     }
 
     public void getActiveCountBySecondCategory(int secondCategoryId, CategorisInsideRepository.CountCallback callback) {

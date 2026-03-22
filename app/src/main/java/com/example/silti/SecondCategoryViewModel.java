@@ -10,42 +10,47 @@ import java.util.List;
 
 public class SecondCategoryViewModel extends AndroidViewModel {
     private SecondCategoryRepository secondCategoryRepository;
-    private MutableLiveData<Integer> currentFirstCategoryId = new MutableLiveData<>();
+
+    // للبطاقة الثالثة (إضافة منتج)
+    private MutableLiveData<Integer> currentFirstCategoryIdForCard3 = new MutableLiveData<>();
+    private LiveData<List<table_secondCategory>> categoriesByFirstCategoryForCard3;
+
+    // للبطاقة الثانية (إضافة تصنيف داخلي)
+    private MutableLiveData<Integer> currentFirstCategoryIdForCard2 = new MutableLiveData<>();
+    private LiveData<List<table_secondCategory>> categoriesByFirstCategoryForCard2;
 
     public SecondCategoryViewModel(Application application) {
         super(application);
         secondCategoryRepository = new SecondCategoryRepository(application);
     }
 
-    public void setCurrentFirstCategoryId(int firstCategoryId) {
-        // ✅ استخدام postValue بدلاً من setValue
-        currentFirstCategoryId.postValue(firstCategoryId);
+    // ========== للبطاقة الثالثة (إضافة منتج) ==========
+    public void setCurrentFirstCategoryIdForCard3(int firstCategoryId) {
+        currentFirstCategoryIdForCard3.postValue(firstCategoryId);
+        categoriesByFirstCategoryForCard3 = secondCategoryRepository.getCategoriesByFirstCategory(firstCategoryId);
     }
 
-    public LiveData<List<table_secondCategory>> getCategoriesByFirstCategory() {
-        Integer id = currentFirstCategoryId.getValue();
-        if (id != null) {
-            return secondCategoryRepository.getCategoriesByFirstCategory(id);
-        }
-        return new MutableLiveData<>(null);
+    public LiveData<List<table_secondCategory>> getCategoriesByFirstCategoryForCard3() {
+        return categoriesByFirstCategoryForCard3;
     }
 
-    public LiveData<List<table_secondCategory>> getAllCategoriesByFirstCategory(int firstCategoryId) {
-        return secondCategoryRepository.getAllCategoriesByFirstCategory(firstCategoryId);
+    // ========== للبطاقة الثانية (إضافة تصنيف داخلي) ==========
+    public void setCurrentFirstCategoryIdForCard2(int firstCategoryId) {
+        currentFirstCategoryIdForCard2.postValue(firstCategoryId);
+        categoriesByFirstCategoryForCard2 = secondCategoryRepository.getCategoriesByFirstCategory(firstCategoryId);
     }
 
-    public LiveData<table_secondCategory> getCategoryById(int categoryId) {
-        return secondCategoryRepository.getCategoryById(categoryId);
+    public LiveData<List<table_secondCategory>> getCategoriesByFirstCategoryForCard2() {
+        return categoriesByFirstCategoryForCard2;
     }
 
-    public void insert(String name, String icon) {
-        Integer firstCategoryId = currentFirstCategoryId.getValue();
-        if (firstCategoryId != null) {
-            secondCategoryRepository.insert(name, firstCategoryId, icon);
-        }
-    }
-
+    // ========== دوال الإدراج والتحديث المشتركة ==========
     public void insert(table_secondCategory category) {
+        secondCategoryRepository.insert(category);
+    }
+
+    public void insert(String name, int firstCategoryId, String icon) {
+        table_secondCategory category = new table_secondCategory(name, firstCategoryId, icon);
         secondCategoryRepository.insert(category);
     }
 
@@ -67,6 +72,14 @@ public class SecondCategoryViewModel extends AndroidViewModel {
 
     public void deleteByFirstCategory(int firstCategoryId) {
         secondCategoryRepository.deleteByFirstCategory(firstCategoryId);
+    }
+
+    public LiveData<table_secondCategory> getCategoryById(int categoryId) {
+        return secondCategoryRepository.getCategoryById(categoryId);
+    }
+
+    public LiveData<List<table_secondCategory>> getAllCategoriesByFirstCategory(int firstCategoryId) {
+        return secondCategoryRepository.getAllCategoriesByFirstCategory(firstCategoryId);
     }
 
     public void getActiveCountByFirstCategory(int firstCategoryId, SecondCategoryRepository.CountCallback callback) {

@@ -33,6 +33,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         notifyDataSetChanged();
     }
 
+    public void setSelectedPosition(int position) {
+        int previousPosition = selectedPosition;
+        selectedPosition = position;
+        notifyItemChanged(previousPosition);
+        notifyItemChanged(selectedPosition);
+    }
+
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -65,12 +72,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         void bind(String category, boolean isSelected) {
             tvCategory.setText(category);
 
+            // تغيير المظهر حسب التحديد
             if (isSelected) {
-                cardView.setCardBackgroundColor(itemView.getContext().getColor(R.color.primary));
-                tvCategory.setTextColor(itemView.getContext().getColor(R.color.white));
+                cardView.setCardBackgroundColor(itemView.getContext().getColor(R.color.primary_dark));
+                tvCategory.setTextColor(itemView.getContext().getColor(R.color.black));
+                cardView.setCardElevation(4f);
             } else {
                 cardView.setCardBackgroundColor(itemView.getContext().getColor(R.color.light_gray));
-                tvCategory.setTextColor(itemView.getContext().getColor(R.color.black));
+                tvCategory.setTextColor(itemView.getContext().getColor(R.color.white));
+                cardView.setCardElevation(2f);
             }
 
             itemView.setOnClickListener(v -> {

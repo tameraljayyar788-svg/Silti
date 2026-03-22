@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             Fragment selectedFragment = null;
 
             int itemId = item.getItemId();
-            if (itemId == R.id.navigation) {
+            if (itemId == R.id.HomeScreen) {
                 selectedFragment = new HomeFragment();
             } else if (itemId == R.id.offers) {
                 selectedFragment = new Offers();

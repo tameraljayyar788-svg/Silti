@@ -27,7 +27,7 @@ public class PaymentMethod extends AppCompatActivity {
             return insets;
         });
 
-        binding.paymentMethode.setOnClickListener(new View.OnClickListener() {
+        binding.ChoosepaymentMethode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(PaymentMethod.this, ChoosePayMent.class);

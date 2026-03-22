@@ -27,7 +27,6 @@ public class CartViewModel extends AndroidViewModel {
         cartTotal = cartRepository.getCartTotalPrice(userId);
     }
 
-    // Cart data
     public LiveData<List<table_cart>> getCartItems() {
         return cartItems;
     }
@@ -40,7 +39,6 @@ public class CartViewModel extends AndroidViewModel {
         return cartTotal;
     }
 
-    // Add to cart
     public void addToCart(table_cart cartItem) {
         Long userId = currentUserId.getValue();
         if (userId != null) {
@@ -57,7 +55,6 @@ public class CartViewModel extends AndroidViewModel {
         }
     }
 
-    // Update
     public void updateCartItem(table_cart cartItem) {
         cartRepository.updateCartItem(cartItem);
     }
@@ -66,7 +63,6 @@ public class CartViewModel extends AndroidViewModel {
         cartRepository.updateQuantity(cartItemId, quantity);
     }
 
-    // Remove from cart
     public void removeFromCart(long productId) {
         Long userId = currentUserId.getValue();
         if (userId != null) {
@@ -85,7 +81,6 @@ public class CartViewModel extends AndroidViewModel {
         }
     }
 
-    // Check if in cart
     public void isInCart(long productId, CartRepository.CartCheckCallback callback) {
         Long userId = currentUserId.getValue();
         if (userId != null) {
@@ -93,7 +88,6 @@ public class CartViewModel extends AndroidViewModel {
         }
     }
 
-    // Get total price as formatted string
     public String getFormattedTotal() {
         Double total = cartTotal.getValue();
         if (total != null) {

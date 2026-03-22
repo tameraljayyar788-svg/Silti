@@ -1,63 +1,170 @@
 package com.example.silti;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Ai#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.silti.databinding.FragmentAiBinding;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Ai extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private FragmentAiBinding binding;
+    private ChatAdapter chatAdapter;
+    private List<ChatMessage> chatHistory = new ArrayList<>();
+    private Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public Ai() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Ai.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Ai newInstance(String param1, String param2) {
-        Ai fragment = new Ai();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    // API Service
+    private GeminiApiService apiService;
+    private boolean isSending = false;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        binding = FragmentAiBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // تهيئة API
+        apiService = new GeminiApiService();
+
+        setupRecyclerView();
+        setupClickListeners();
+        setupTextWatcher();
+
+        // رسالة ترحيب
+        addWelcomeMessage();
+    }
+
+    private void setupRecyclerView() {
+        chatAdapter = new ChatAdapter(chatHistory);
+        binding.recyclerChat.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.recyclerChat.setAdapter(chatAdapter);
+    }
+
+    private void setupClickListeners() {
+        binding.send.setOnClickListener(v -> {
+            String message = binding.chat.getText().toString().trim();
+            if (!message.isEmpty() && !isSending) {
+                sendMessage(message);
+            }
+        });
+
+        binding.img.setOnClickListener(v -> {
+            toggleChat();
+        });
+    }
+
+    private void setupTextWatcher() {
+        binding.chat.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    binding.send.setImageResource(R.drawable.send);
+                } else {
+                    binding.send.setImageResource(R.drawable.send_back);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void toggleChat() {
+        if (binding.recyclerChat.getVisibility() == View.VISIBLE) {
+            binding.recyclerChat.setVisibility(View.GONE);
+            binding.text.setVisibility(View.VISIBLE);
+            binding.textHint.setVisibility(View.VISIBLE);
+            binding.img.setVisibility(View.VISIBLE);
+        } else {
+            binding.recyclerChat.setVisibility(View.VISIBLE);
+            binding.text.setVisibility(View.GONE);
+            binding.textHint.setVisibility(View.GONE);
         }
     }
 
+    private void addWelcomeMessage() {
+        String welcome = "مرحباً! أنا المساعد الذكي. كيف يمكنني مساعدتك اليوم؟";
+        chatHistory.add(new ChatMessage(welcome, false, System.currentTimeMillis()));
+        chatAdapter.notifyItemInserted(chatHistory.size() - 1);
+    }
+
+    private void sendMessage(String message) {
+        // إضافة رسالة المستخدم
+        chatHistory.add(new ChatMessage(message, true, System.currentTimeMillis()));
+        chatAdapter.notifyItemInserted(chatHistory.size() - 1);
+        binding.recyclerChat.smoothScrollToPosition(chatHistory.size() - 1);
+
+        // مسح حقل الإدخال
+        binding.chat.setText("");
+
+        // منع الإرسال المتكرر
+        isSending = true;
+
+        // إظهار مؤشر الكتابة
+        showTypingIndicator();
+
+        // إرسال إلى API
+        apiService.sendMessage(message, new GeminiApiService.GeminiCallback() {
+            @Override
+            public void onSuccess(String response) {
+                isSending = false;
+                hideTypingIndicator();
+
+                chatHistory.add(new ChatMessage(response, false, System.currentTimeMillis()));
+                chatAdapter.notifyItemInserted(chatHistory.size() - 1);
+                binding.recyclerChat.smoothScrollToPosition(chatHistory.size() - 1);
+            }
+
+            @Override
+            public void onError(String error) {
+                isSending = false;
+                hideTypingIndicator();
+
+                String errorMessage = "عذراً: " + error;
+                chatHistory.add(new ChatMessage(errorMessage, false, System.currentTimeMillis()));
+                chatAdapter.notifyItemInserted(chatHistory.size() - 1);
+                binding.recyclerChat.smoothScrollToPosition(chatHistory.size() - 1);
+
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showTypingIndicator() {
+        // يمكن إضافة مؤشر كتابة في المستقبل
+    }
+
+    private void hideTypingIndicator() {
+        // إخفاء مؤشر الكتابة
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ai, container, false);
+    public void onDestroyView() {
+        super.onDestroyView();
+        mainHandler.removeCallbacksAndMessages(null);
+        binding = null;
     }
 }

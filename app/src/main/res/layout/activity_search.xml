@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Search">
+    tools:context=".Search"
+    android:background="@color/white">
 
     <ImageButton
         android:id="@+id/back"
@@ -28,6 +29,8 @@
         android:hint="بحث على منتجات"
         android:drawableRight="@drawable/search"
         android:drawablePadding="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         android:padding="10dp"
         android:background="@drawable/search_background"
         app:layout_constraintTop_toTopOf="parent"
@@ -35,5 +38,16 @@
         app:layout_constraintLeft_toLeftOf="parent"
         />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerSearch"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:paddingHorizontal="8dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/search"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,11 +28,9 @@ public class Show_Product extends AppCompatActivity {
 
     private String categoryName;
     private int firstCategoryId = 0;
-    private int selectedSecondCategoryId = 0;
-    private int selectedInsideCategoryId = 0;
+    private int selectedSecondCategoryPosition = 0;
+    private int selectedInsideCategoryPosition = 0;
 
-    private List<String> subCategories = new ArrayList<>();
-    private List<String> insideCategories = new ArrayList<>();
     private List<table_product> allProducts = new ArrayList<>();
     private List<table_secondCategory> secondCategoriesList = new ArrayList<>();
     private List<table_CategorisInside> insideCategoriesList = new ArrayList<>();
@@ -92,16 +90,30 @@ public class Show_Product extends AppCompatActivity {
     }
 
     private void setupRecyclerViews() {
-        // Adapter للتصنيفات الفرعية
-        subCategoryAdapter = new CategoryAdapter(new ArrayList<>(), (category, position) -> {
-            loadInsideCategories(category);
+        // Adapter للتصنيفات الفرعية - مع دعم تغيير اللون عند التحديد
+        subCategoryAdapter = new CategoryAdapter(new ArrayList<>(), new CategoryAdapter.OnCategoryClickListener() {
+            @Override
+            public void onCategoryClick(String category, int position) {
+                // تحديث الموضع المحدد
+                selectedSecondCategoryPosition = position;
+                // تحميل التصنيفات الداخلية
+                loadInsideCategories(position);
+            }
         });
+
         binding.rvSubCategories.setAdapter(subCategoryAdapter);
 
-        // Adapter للتصنيفات الداخلية
-        insideCategoryAdapter = new CategoryAdapter(new ArrayList<>(), (category, position) -> {
-            loadProductsForSelectedCategories();
+        // Adapter للتصنيفات الداخلية - مع دعم تغيير اللون عند التحديد
+        insideCategoryAdapter = new CategoryAdapter(new ArrayList<>(), new CategoryAdapter.OnCategoryClickListener() {
+            @Override
+            public void onCategoryClick(String category, int position) {
+                // تحديث الموضع المحدد
+                selectedInsideCategoryPosition = position;
+                // تحميل المنتجات حسب التصنيفات المحددة
+                loadProductsForSelectedCategories();
+            }
         });
+
         binding.rvInsideCategories.setAdapter(insideCategoryAdapter);
 
         // Adapter للمنتجات
@@ -152,10 +164,10 @@ public class Show_Product extends AppCompatActivity {
     }
 
     private void loadData() {
-        // ✅ تعيين معرف التصنيف الأساسي في ProductViewModel
+        // تعيين معرف التصنيف الأساسي في ProductViewModel
         productViewModel.setCurrentFirstCategoryId(firstCategoryId);
 
-        // ✅ مراقبة المنتجات (بدون معاملات)
+        // مراقبة المنتجات
         productViewModel.getProductsByFirstCategory().observe(this, products -> {
             if (products != null) {
                 allProducts.clear();
@@ -166,94 +178,114 @@ public class Show_Product extends AppCompatActivity {
                     Toast.makeText(this, "لا توجد منتجات في هذا التصنيف", Toast.LENGTH_SHORT).show();
                 }
 
-                loadSubCategories();
+                // تحميل التصنيفات الفرعية بعد تحميل المنتجات
+                loadSecondCategories();
             }
         });
+    }
 
-        // ✅ تعيين معرف التصنيف الأساسي في SecondCategoryViewModel
-        secondCategoryViewModel.setCurrentFirstCategoryId(firstCategoryId);
+    private void loadSecondCategories() {
+        secondCategoryViewModel.setCurrentFirstCategoryIdForCard3(firstCategoryId);
 
-        // ✅ مراقبة التصنيفات الفرعية (بدون معاملات)
-        secondCategoryViewModel.getCategoriesByFirstCategory().observe(this, secondCategories -> {
-            if (secondCategories != null) {
+        secondCategoryViewModel.getCategoriesByFirstCategoryForCard3().observe(this, secondCategories -> {
+            if (secondCategories != null && !secondCategories.isEmpty()) {
                 secondCategoriesList.clear();
                 secondCategoriesList.addAll(secondCategories);
+
+                // إنشاء قائمة بأسماء التصنيفات الفرعية
+                List<String> subCategoryNames = new ArrayList<>();
+                for (table_secondCategory category : secondCategoriesList) {
+                    subCategoryNames.add(category.name);
+                }
+
+                // تحديث الـ Adapter للتصنيفات الفرعية
+                subCategoryAdapter.updateCategories(subCategoryNames);
+
+                // تحديد أول تصنيف فرعي افتراضياً
+                if (!subCategoryNames.isEmpty()) {
+                    selectedSecondCategoryPosition = 0;
+                    subCategoryAdapter.setSelectedPosition(0);
+
+                    // تحميل التصنيفات الداخلية لأول تصنيف فرعي
+                    loadInsideCategories(0);
+                }
+
                 Log.d("Show_Product", "تم تحميل " + secondCategories.size() + " تصنيف فرعي");
+            } else {
+                // إذا لم توجد تصنيفات فرعية، نعرض "الكل" فقط
+                List<String> defaultList = new ArrayList<>();
+                defaultList.add("الكل");
+                subCategoryAdapter.updateCategories(defaultList);
+                selectedSecondCategoryPosition = 0;
+                subCategoryAdapter.setSelectedPosition(0);
+
+                // تحميل المنتجات مباشرة
+                loadProductsForSelectedCategories();
             }
         });
     }
 
-    private void loadSubCategories() {
-        subCategories.clear();
+    private void loadInsideCategories(int secondCategoryPosition) {
+        if (secondCategoriesList.isEmpty()) {
+            // إذا لم توجد تصنيفات فرعية، نظهر "الكل" فقط في التصنيفات الداخلية أيضاً
+            List<String> defaultList = new ArrayList<>();
+            defaultList.add("الكل");
+            insideCategoryAdapter.updateCategories(defaultList);
+            selectedInsideCategoryPosition = 0;
+            insideCategoryAdapter.setSelectedPosition(0);
 
-        // استخدام أسماء التصنيفات الفرعية من secondCategoriesList
-        if (!secondCategoriesList.isEmpty()) {
-            for (table_secondCategory secondCat : secondCategoriesList) {
-                subCategories.add(secondCat.name);
-            }
-        } else {
-            // إذا لم تكن هناك تصنيفات فرعية، استخرج من المنتجات
-            for (table_product product : allProducts) {
-                if (product.getSecondCategoryId() > 0) {
-                    String subCatName = "تصنيف " + product.getSecondCategoryId();
-                    if (!subCategories.contains(subCatName)) {
-                        subCategories.add(subCatName);
-                    }
-                }
-            }
+            // تحميل المنتجات
+            loadProductsForSelectedCategories();
+            return;
         }
 
-        if (subCategories.isEmpty()) {
-            subCategories.add("الكل");
-        }
+        int secondCategoryId = secondCategoriesList.get(secondCategoryPosition).id;
 
-        subCategoryAdapter.updateCategories(subCategories);
-        Log.d("Show_Product", "تم عرض " + subCategories.size() + " تصنيف فرعي");
+        // استخدام ViewModel المناسب لتحميل التصنيفات الداخلية
+        // ملاحظة: هذا يتطلب وجود الدالة المناسبة في CategorisInsideViewModel
+        // insideCategoryViewModel.setCurrentSecondCategoryIdForCard3(secondCategoryId);
+        // insideCategoryViewModel.getCategoriesBySecondCategoryForCard3().observe(...);
 
-        if (!subCategories.isEmpty()) {
-            loadInsideCategories(subCategories.get(0));
-        }
-    }
+        // حالياً نستخدم البيانات من المنتجات كحل مؤقت
+        insideCategoriesList.clear();
+        List<String> insideCategoryNames = new ArrayList<>();
 
-    private void loadInsideCategories(String subCategory) {
-        insideCategories.clear();
-
-        // تحديد معرف التصنيف الفرعي المحدد
-        selectedSecondCategoryId = subCategories.indexOf(subCategory) + 1;
-
-        // استخراج التصنيفات الداخلية من المنتجات
         for (table_product product : allProducts) {
-            if (product.getSecondCategoryId() == selectedSecondCategoryId &&
-                    product.getInsideCategoryId() > 0) {
-
-                String insideCat = "قسم " + product.getInsideCategoryId();
-                if (!insideCategories.contains(insideCat)) {
-                    insideCategories.add(insideCat);
+            if (product.getSecondCategoryId() == secondCategoryId && product.getInsideCategoryId() > 0) {
+                // هنا يجب جلب اسم التصنيف الداخلي من قاعدة البيانات
+                // حالياً نستخدم "قسم " + id كبديل
+                String insideName = "قسم " + product.getInsideCategoryId();
+                if (!insideCategoryNames.contains(insideName)) {
+                    insideCategoryNames.add(insideName);
                 }
             }
         }
 
-        if (insideCategories.isEmpty()) {
-            insideCategories.add("الكل");
+        if (insideCategoryNames.isEmpty()) {
+            insideCategoryNames.add("الكل");
         }
 
-        insideCategoryAdapter.updateCategories(insideCategories);
-        Log.d("Show_Product", "تم عرض " + insideCategories.size() + " تصنيف داخلي");
+        insideCategoryAdapter.updateCategories(insideCategoryNames);
+        selectedInsideCategoryPosition = 0;
+        insideCategoryAdapter.setSelectedPosition(0);
 
+        // تحميل المنتجات
         loadProductsForSelectedCategories();
     }
 
     private void loadProductsForSelectedCategories() {
         List<table_product> filteredProducts = new ArrayList<>();
 
+        int selectedSecondCategoryId = 0;
+        if (!secondCategoriesList.isEmpty() && selectedSecondCategoryPosition < secondCategoriesList.size()) {
+            selectedSecondCategoryId = secondCategoriesList.get(selectedSecondCategoryPosition).id;
+        }
+
+        // فلترة المنتجات
         for (table_product product : allProducts) {
             // فلترة حسب التصنيف الفرعي
             if (selectedSecondCategoryId == 0 || product.getSecondCategoryId() == selectedSecondCategoryId) {
-
-                // فلترة حسب التصنيف الداخلي (إذا تم اختيار واحد)
-                if (selectedInsideCategoryId == 0 || product.getInsideCategoryId() == selectedInsideCategoryId) {
-                    filteredProducts.add(product);
-                }
+                filteredProducts.add(product);
             }
         }
 

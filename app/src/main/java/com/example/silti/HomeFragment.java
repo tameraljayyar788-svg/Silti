@@ -131,7 +131,8 @@ public class HomeFragment extends Fragment {
     private void setupClickListeners() {
         // بحث
         binding.search.setOnClickListener(v -> {
-            startActivity(new Intent(requireContext(), Search.class));
+            Intent intent = new Intent(requireContext(),Search.class);
+            startActivity(intent);
         });
 
         // الصورة الرئيسية - تعرض منتج عشوائي عليه خصم
@@ -224,11 +225,12 @@ public class HomeFragment extends Fragment {
                     product.getPrice() * (1 - product.getDiscount() / 100) :
                     product.getPrice();
 
+            // ✅ تمرير مسار الصورة بشكل صحيح
             cartViewModel.addToCart(
                     product.getId(),
                     product.getName(),
                     price,
-                    product.getImage(),
+                    product.getImage(),  // مسار الصورة
                     1,
                     "M"
             );

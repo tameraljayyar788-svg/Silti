@@ -1,63 +1,159 @@
 package com.example.silti;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Cart#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.silti.databinding.FragmentCartBinding;
+
+import java.util.ArrayList;
+
 public class Cart extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private FragmentCartBinding binding;
+    private CartViewModel cartViewModel;
+    private CartAdapter cartAdapter;
+    private long currentUserId;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public Cart() {
-        // Required empty public constructor
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentCartBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Cart.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Cart newInstance(String param1, String param2) {
-        Cart fragment = new Cart();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        initViewModel();
+        getCurrentUser();
+        setupRecyclerView();
+        setupClickListeners();
+        observeCartData();
+
+    }
+
+    private void initViewModel() {
+        cartViewModel = new ViewModelProvider(requireActivity()).get(CartViewModel.class);
+    }
+
+    private void getCurrentUser() {
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MyCartPrefs", Context.MODE_PRIVATE);
+        currentUserId = prefs.getLong("userId", -1);
+
+        if (currentUserId != -1) {
+            cartViewModel.setCurrentUserId(currentUserId);
         }
     }
 
+    private void setupRecyclerView() {
+        cartAdapter = new CartAdapter(new ArrayList<>(), new CartAdapter.OnCartItemClickListener() {
+            @Override
+            public void onQuantityChanged(table_cart item, int newQuantity) {
+                if (newQuantity <= 0) {
+                    cartViewModel.removeFromCart(item.getProductId());
+                } else {
+                    cartViewModel.updateQuantity(item.getId(), newQuantity);
+                }
+            }
+
+            @Override
+            public void onRemoveClick(table_cart item) {
+                cartViewModel.removeFromCart(item.getProductId());
+                Toast.makeText(requireContext(), "تمت الإزالة من السلة", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onItemClick(table_cart item) {
+                Intent intent = new Intent(requireContext(), MainProduct.class);
+                intent.putExtra("product_id", item.getProductId());
+                startActivity(intent);
+            }
+        });
+
+        binding.productinCart.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        binding.productinCart.setAdapter(cartAdapter);
+    }
+
+    private void setupClickListeners() {
+        binding.clear.setOnClickListener(v -> {
+            if (currentUserId != -1) {
+                cartViewModel.clearCart();
+                Toast.makeText(requireContext(), "تم إفراغ السلة", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.shoppingNow.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frameNavi, new HomeFragment())
+                    .commit();
+        });
+
+        // زر إتمام الشراء
+        binding.btnCheckout.setOnClickListener(v -> {
+            Double total = cartViewModel.getCartTotal().getValue();
+            if (total != null && total > 0) {
+                Intent intent = new Intent(requireContext(), PaymentMethod.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(requireContext(), "السلة فارغة", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void observeCartData() {
+        if (currentUserId == -1) return;
+
+        cartViewModel.getCartItems().observe(getViewLifecycleOwner(), items -> {
+            if (items != null && !items.isEmpty()) {
+                binding.imgCart.setVisibility(View.GONE);
+                binding.shoppingNow.setVisibility(View.GONE);
+                binding.productinCart.setVisibility(View.VISIBLE);
+                binding.bottomLayout.setVisibility(View.VISIBLE);
+                cartAdapter.updateItems(items);
+                updateTotalPrice();
+            } else {
+                binding.imgCart.setVisibility(View.VISIBLE);
+                binding.shoppingNow.setVisibility(View.VISIBLE);
+                binding.productinCart.setVisibility(View.GONE);
+                binding.bottomLayout.setVisibility(View.GONE);
+            }
+        });
+
+        cartViewModel.getCartTotal().observe(getViewLifecycleOwner(), total -> {
+            updateTotalPrice();
+        });
+    }
+
+    private void updateTotalPrice() {
+        Double total = cartViewModel.getCartTotal().getValue();
+        if (total != null) {
+            binding.tvTotalPrice.setText(String.format("$%.2f", total));
+        } else {
+            binding.tvTotalPrice.setText("$0.00");
+        }
+
+    }
+
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cart, container, false);
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

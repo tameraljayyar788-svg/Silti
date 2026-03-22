@@ -60,6 +60,11 @@ public class MainProduct extends AppCompatActivity {
     private void getCurrentUser() {
         SharedPreferences prefs = getSharedPreferences("MyCartPrefs", MODE_PRIVATE);
         currentUserId = prefs.getLong("userId", -1);
+
+        if (currentUserId != -1) {
+            favoriteViewModel.setCurrentUserId(currentUserId);
+            cartViewModel.setCurrentUserId(currentUserId);
+        }
     }
 
     private void setupRecyclerView() {
@@ -116,6 +121,7 @@ public class MainProduct extends AppCompatActivity {
     private void displayProductDetails() {
         binding.nameProduct.setText(currentProduct.getName());
 
+        // ✅ تحميل صورة المنتج مع تحسين الأداء
         if (currentProduct.getImage() != null && !currentProduct.getImage().isEmpty()) {
             Glide.with(this)
                     .load(currentProduct.getImage())
@@ -123,10 +129,13 @@ public class MainProduct extends AppCompatActivity {
                     .error(R.drawable.logo)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(binding.imgProduct);
+        } else {
+            binding.imgProduct.setImageResource(R.drawable.logo);
         }
 
         binding.ratingBar.setRating(currentProduct.getRate());
 
+        // عرض السعر والخصم
         if (currentProduct.getDiscount() > 0) {
             binding.regularPrice.setVisibility(View.GONE);
             binding.currencyRegular.setVisibility(View.GONE);
@@ -161,15 +170,10 @@ public class MainProduct extends AppCompatActivity {
 
     private void checkIfFavorite() {
         if (currentUserId != -1 && currentProduct != null) {
-            // ✅ الآن نمرر userId و productId معاً
-            favoriteViewModel.isFavorite(currentUserId, currentProduct.getId(),
-                    new FavoriteRepository.FavoriteCheckCallback() {
-                        @Override
-                        public void onResult(boolean isFav) {
-                            isFavorite = isFav;
-                            updateFavoriteButton();
-                        }
-                    });
+            favoriteViewModel.isFavorite(currentUserId, currentProduct.getId(), isFav -> {
+                isFavorite = isFav;
+                updateFavoriteButton();
+            });
         }
     }
 
@@ -208,11 +212,12 @@ public class MainProduct extends AppCompatActivity {
                 currentProduct.getPrice() * (1 - currentProduct.getDiscount() / 100) :
                 currentProduct.getPrice();
 
+        // ✅ تمرير مسار الصورة بشكل صحيح
         cartViewModel.addToCart(
                 currentProduct.getId(),
                 currentProduct.getName(),
                 price,
-                currentProduct.getImage(),
+                currentProduct.getImage(),  // مسار الصورة
                 quantity,
                 "M"
         );
