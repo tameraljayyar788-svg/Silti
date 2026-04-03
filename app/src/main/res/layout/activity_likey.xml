@@ -7,13 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".Likey"
     android:background="@color/white">
+
+    <!-- عنوان الشاشة -->
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textSize="25dp"
-        android:text="أعجبني"
+        android:text="المفضلة"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:fontFamily="@font/tajwal"
@@ -21,34 +23,82 @@
         android:gravity="center"
         android:layout_marginTop="20dp"/>
 
+    <!-- زر العودة -->
     <ImageButton
         android:id="@+id/back"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:background="@color/white"
         android:src="@drawable/back"
+        android:padding="4dp"
         app:layout_constraintTop_toTopOf="@id/title"
         app:layout_constraintBottom_toBottomOf="@id/title"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginRight="15dp"/>
 
+    <!-- زر حذف الكل -->
     <ImageButton
         android:id="@+id/clear"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:background="@color/white"
         android:src="@drawable/clear"
+        android:padding="4dp"
         app:layout_constraintTop_toTopOf="@id/title"
         app:layout_constraintBottom_toBottomOf="@id/title"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="15dp"/>
 
+    <!-- صورة عند عدم وجود منتجات في المفضلة -->
+    <LinearLayout
+        android:id="@+id/emptyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/empty_favorites"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="لا توجد منتجات في المفضلة"
+            android:textColor="#757575"
+            android:textSize="18sp"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:id="@+id/goShopping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="لنذهب للتسوق"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:background="@drawable/button_login"
+            />
+
+    </LinearLayout>
+
+    <!-- RecyclerView لعرض المنتجات المفضلة -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycle_like"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="60dp"
+        android:paddingHorizontal="8dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
         app:layout_constraintTop_toBottomOf="@id/title"
-        android:layout_marginTop="15dp"/>
-
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

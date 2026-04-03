@@ -72,7 +72,7 @@
             android:id="@+id/like_product"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/like_black"
+            android:src="@drawable/like_red"
             android:padding="6dp"
             android:background="@drawable/background_like"
             app:layout_constraintTop_toTopOf="parent"

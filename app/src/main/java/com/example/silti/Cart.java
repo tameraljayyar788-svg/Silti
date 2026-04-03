@@ -74,7 +74,7 @@ public class Cart extends Fragment {
             @Override
             public void onRemoveClick(table_cart item) {
                 cartViewModel.removeFromCart(item.getProductId());
-                Toast.makeText(requireContext(), "تمت الإزالة من السلة", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "تم حذف " + item.getName() + " من السلة", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -85,10 +85,9 @@ public class Cart extends Fragment {
             }
         });
 
-        binding.productinCart.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        binding.productinCart.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.productinCart.setAdapter(cartAdapter);
     }
-
     private void setupClickListeners() {
         binding.clear.setOnClickListener(v -> {
             if (currentUserId != -1) {

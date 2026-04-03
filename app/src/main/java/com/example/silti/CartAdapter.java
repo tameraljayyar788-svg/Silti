@@ -1,10 +1,12 @@
 package com.example.silti;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,33 +83,25 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             price.setText(String.format("$%.2f", item.getPrice()));
             quantity.setText(String.valueOf(item.getQuantity()));
 
-            // ✅ تحسين تحميل الصورة
-            String imagePath = item.getImage();
-
-            if (imagePath != null && !imagePath.isEmpty()) {
-                try {
-                    Glide.with(itemView.getContext())
-                            .load(imagePath)
-                            .apply(new RequestOptions()
-                                    .placeholder(R.drawable.logo)
-                                    .error(R.drawable.logo)
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL))
-                            .into(ImgProduct);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ImgProduct.setImageResource(R.drawable.logo);
-                }
+            // تحميل الصورة
+            if (item.getImage() != null && !item.getImage().isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(item.getImage())
+                        .apply(new RequestOptions()
+                                .placeholder(R.drawable.logo)
+                                .error(R.drawable.logo)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL))
+                        .into(ImgProduct);
             } else {
                 ImgProduct.setImageResource(R.drawable.logo);
             }
 
+            // ✅ أزرار التحكم في الكمية
             minus.setOnClickListener(v -> {
                 int newQty = item.getQuantity() - 1;
                 if (newQty >= 1) {
                     quantity.setText(String.valueOf(newQty));
                     listener.onQuantityChanged(item, newQty);
-                } else {
-                    listener.onRemoveClick(item);
                 }
             });
 
@@ -117,7 +111,33 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 listener.onQuantityChanged(item, newQty);
             });
 
-            menu.setOnClickListener(v -> listener.onRemoveClick(item));
+            // ✅ أيقونة القائمة (ثلاث نقاط) - إظهار PopupMenu عند الضغط
+            menu.setOnClickListener(v -> {
+                PopupMenu popupMenu = new PopupMenu(itemView.getContext(), menu);
+                popupMenu.getMenuInflater().inflate(R.menu.cart_item_menu, popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        int itemId = menuItem.getItemId();
+                        if (itemId == R.id.action_remove) {
+                            // إظهار تأكيد الحذف
+                            new android.app.AlertDialog.Builder(itemView.getContext())
+                                    .setTitle("حذف المنتج")
+                                    .setMessage("هل أنت متأكد من حذف " + item.getName() + " من السلة؟")
+                                    .setPositiveButton("نعم", (dialog, which) -> {
+                                        listener.onRemoveClick(item);
+                                    })
+                                    .setNegativeButton("لا", null)
+                                    .show();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                popupMenu.show();
+            });
 
             itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
